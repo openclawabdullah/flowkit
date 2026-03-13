@@ -1,0 +1,141 @@
+/**
+ * FlowKit - Open Source Widget System for Chat Interfaces
+ * 
+ * A beautiful, open-source widget system for chat interfaces.
+ * Like ChatKit, but yours.
+ * 
+ * @packageDocumentation
+ */
+
+// Main Components
+export { Chat, type ChatProps } from './Chat'
+export { WidgetRenderer } from './WidgetRenderer'
+
+// Adapters
+export { DemoAdapter } from './DemoAdapter'
+
+// Types
+export type {
+  // Core
+  Widget,
+  WidgetAction,
+  StreamEvent,
+  Message,
+  ConversationContext,
+  FlowKitAdapter,
+  
+  // Layout
+  CardWidget,
+  RowWidget,
+  ColWidget,
+  BoxWidget,
+  GridWidget,
+  SpacerWidget,
+  DividerWidget,
+  
+  // Typography
+  TextWidget,
+  TitleWidget,
+  CaptionWidget,
+  MarkdownWidget,
+  
+  // Interactive
+  ButtonWidget,
+  BadgeWidget,
+  ChipWidget,
+  ToggleWidget,
+  CheckboxWidget,
+  RadioWidget,
+  SelectWidget,
+  DatePickerWidget,
+  TimePickerWidget,
+  SliderWidget,
+  RatingWidget,
+  UploadWidget,
+  InputWidget,
+  TextareaWidget,
+  LabelWidget,
+  ChartWidget,
+  
+  // Form
+  FormWidget,
+  FieldWidget,
+  FieldGroupWidget,
+  
+  // Media
+  ImageWidget,
+  IconWidget,
+  AvatarWidget,
+  VideoWidget,
+  AudioWidget,
+  
+  // Lists
+  ListViewWidget,
+  ListViewItemWidget,
+  TableWidget,
+  
+  // Navigation
+  BreadcrumbWidget,
+  StepperWidget,
+  PaginationWidget,
+  
+  // Feedback
+  ProgressWidget,
+  SpinnerWidget,
+  SkeletonWidget,
+  AlertWidget,
+  ToastWidget,
+  ConfirmationWidget,
+  SuccessWidget,
+  ErrorWidget,
+  
+  // Auth
+  LoginWidget,
+  VerifyOTPWidget,
+  RegisterWidget,
+  ForgotPasswordWidget,
+  ResetPasswordWidget,
+  
+  // Address
+  AddressFormWidget,
+  AddressListWidget,
+  
+  // E-Commerce
+  ProductCardWidget,
+  ProductGridWidget,
+  ProductDetailWidget,
+  OrderSummaryWidget,
+  OrderTrackingWidget,
+  OrderHistoryWidget,
+  CheckoutWidget,
+  PaymentMethodWidget,
+  InvoiceWidget,
+  InvoiceListWidget,
+  
+  // Category
+  CategoryListWidget,
+  CategoryTreeWidget,
+  SubcategoryWidget,
+  
+  // Support
+  ContactFormWidget,
+  FAQWidget,
+  TermsWidget,
+  PrivacyWidget,
+  
+  // Search
+  SearchWidget,
+  SearchResultsWidget,
+  
+  // Notification
+  NotificationWidget,
+  NotificationListWidget,
+  
+  // Theme
+  Theme,
+  ThemeColors,
+  defaultTheme,
+} from './types'
+
+// Default export
+export { default } from './Chat'

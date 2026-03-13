@@ -276,6 +276,98 @@ export interface UploadWidget extends BaseWidget {
   onRemoveAction?: WidgetAction
 }
 
+// Input & Textarea
+export interface InputWidget extends BaseWidget {
+  type: 'Input'
+  name: string
+  value?: string
+  placeholder?: string
+  type_?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'
+  size?: 'sm' | 'md' | 'lg'
+  variant?: 'outline' | 'filled' | 'flushed' | 'unstyled'
+  disabled?: boolean
+  readonly?: boolean
+  required?: boolean
+  maxLength?: number
+  minLength?: number
+  pattern?: string
+  error?: string
+  helperText?: string
+  leftIcon?: string
+  rightIcon?: string
+  leftElement?: Widget
+  rightElement?: Widget
+  block?: boolean
+  onChangeAction?: WidgetAction
+  onBlurAction?: WidgetAction
+  onFocusAction?: WidgetAction
+}
+
+export interface TextareaWidget extends BaseWidget {
+  type: 'Textarea'
+  name: string
+  value?: string
+  placeholder?: string
+  rows?: number
+  cols?: number
+  maxLength?: number
+  minLength?: number
+  disabled?: boolean
+  readonly?: boolean
+  required?: boolean
+  resize?: 'none' | 'vertical' | 'horizontal' | 'both'
+  error?: string
+  helperText?: string
+  block?: boolean
+  autoResize?: boolean
+  minRows?: number
+  maxRows?: number
+  onChangeAction?: WidgetAction
+  onBlurAction?: WidgetAction
+  onFocusAction?: WidgetAction
+}
+
+export interface LabelWidget extends BaseWidget {
+  type: 'Label'
+  value: string
+  htmlFor?: string
+  required?: boolean
+  size?: 'sm' | 'md' | 'lg'
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold'
+  color?: string
+}
+
+// Chart Widget
+export interface ChartWidget extends BaseWidget {
+  type: 'Chart'
+  chartType: 'line' | 'bar' | 'pie' | 'donut' | 'area' | 'scatter' | 'radar'
+  title?: string
+  subtitle?: string
+  data: {
+    labels: string[]
+    datasets: Array<{
+      label?: string
+      data: number[]
+      backgroundColor?: string | string[]
+      borderColor?: string | string[]
+      borderWidth?: number
+      fill?: boolean
+    }>
+  }
+  options?: {
+    width?: number | string
+    height?: number | string
+    showLegend?: boolean
+    showGrid?: boolean
+    showXAxis?: boolean
+    showYAxis?: boolean
+    animated?: boolean
+    stacked?: boolean
+    horizontal?: boolean
+  }
+  colors?: string[]
+}
+
 // ============================================
 // Form Components
 // ============================================
@@ -987,6 +1079,7 @@ export type Widget =
   | TitleWidget
   | CaptionWidget
   | MarkdownWidget
+  | LabelWidget
   // Interactive
   | ButtonWidget
   | BadgeWidget
@@ -1000,6 +1093,8 @@ export type Widget =
   | SliderWidget
   | RatingWidget
   | UploadWidget
+  | InputWidget
+  | TextareaWidget
   // Form
   | FormWidget
   | FieldWidget
@@ -1010,6 +1105,7 @@ export type Widget =
   | AvatarWidget
   | VideoWidget
   | AudioWidget
+  | ChartWidget
   // Layout Helpers
   | SpacerWidget
   | DividerWidget
