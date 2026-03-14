@@ -5,9 +5,17 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsup src/index.ts --format cjs,esm --dts --external react,react-dom",
+    "build": "tsup src/index.ts --format cjs,esm --dts-resolve --external react,react-dom --tsconfig tsconfig.build.json",
+    "build:fast": "tsup src/index.ts --format cjs,esm --external react,react-dom",
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "npm run build"

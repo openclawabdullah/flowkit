@@ -70,7 +70,11 @@ const WidgetContext = React.createContext<WidgetContextValue>({
 // Size Utilities
 // ============================================
 
-const sizeMap = {
+type SizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
+type WeightKey = 'light' | 'normal' | 'medium' | 'semibold' | 'bold'
+type RadiusKey = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
+
+const sizeMap: Record<SizeKey, string> = {
   xs: '0.75rem',
   sm: '0.875rem',
   md: '1rem',
@@ -81,7 +85,7 @@ const sizeMap = {
   '4xl': '2.25rem',
 }
 
-const weightMap = {
+const weightMap: Record<WeightKey, number> = {
   light: 300,
   normal: 400,
   medium: 500,
@@ -524,7 +528,7 @@ function MarkdownWidget({ widget }: { widget: any }) {
 // ============================================
 
 function ButtonWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   
   const colorStyles: Record<string, any> = {
     primary: {
@@ -612,7 +616,7 @@ function BadgeWidget({ widget }: { widget: any }) {
 }
 
 function ChipWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   
   return (
     <div
@@ -648,7 +652,7 @@ function ChipWidget({ widget }: { widget: any }) {
 }
 
 function ToggleWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [checked, setChecked] = React.useState(widget.checked ?? false)
 
   return (
@@ -687,7 +691,7 @@ function ToggleWidget({ widget }: { widget: any }) {
 }
 
 function CheckboxWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [checked, setChecked] = React.useState(widget.checked ?? false)
 
   return (
@@ -712,7 +716,7 @@ function CheckboxWidget({ widget }: { widget: any }) {
 }
 
 function RadioWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
@@ -735,7 +739,7 @@ function RadioWidget({ widget }: { widget: any }) {
 }
 
 function SelectWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [value, setValue] = React.useState(widget.value ?? '')
 
   return (
@@ -767,7 +771,7 @@ function SelectWidget({ widget }: { widget: any }) {
 }
 
 function DatePickerWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <input
@@ -790,7 +794,7 @@ function DatePickerWidget({ widget }: { widget: any }) {
 }
 
 function RatingWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [value, setValue] = React.useState(widget.value ?? 0)
   const max = widget.max ?? 5
 
@@ -820,7 +824,7 @@ function RatingWidget({ widget }: { widget: any }) {
 }
 
 function UploadWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   return (
@@ -871,7 +875,7 @@ function UploadWidget({ widget }: { widget: any }) {
 // ============================================
 
 function InputWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [value, setValue] = React.useState(widget.value ?? '')
   const [focused, setFocused] = React.useState(false)
 
@@ -954,7 +958,7 @@ function InputWidget_({ widget }: { widget: any }) {
 }
 
 function TextareaWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [value, setValue] = React.useState(widget.value ?? '')
 
   const resizeMap: Record<string, string> = {
@@ -1055,8 +1059,8 @@ function ChartWidget_({ widget }: { widget: any }) {
   const height = typeof options?.height === 'number' ? options.height : 300
   
   // Calculate max value for scaling
-  const maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data))
-  const minValue = chartType === 'bar' || chartType === 'line' || chartType === 'area' 
+  const _maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data))
+  const _minValue = chartType === 'bar' || chartType === 'line' || chartType === 'area' 
     ? 0 
     : 0
 
@@ -1113,7 +1117,7 @@ function BarChart({ data, colors, width, height, options, theme }: any) {
   const barCount = data.labels.length
   const barWidth = chartWidth / barCount * 0.7
   const barGap = chartWidth / barCount * 0.3
-  const maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data)) * 1.1
+  const _maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data)) * 1.1
 
   return (
     <g>
@@ -1186,7 +1190,7 @@ function LineChart({ data, colors, width, height, options, theme }: any) {
   const padding = { top: 20, right: 20, bottom: 40, left: 50 }
   const chartWidth = width - padding.left - padding.right
   const chartHeight = height - padding.top - padding.bottom
-  const maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data)) * 1.1
+  const _maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data)) * 1.1
   const pointCount = data.labels.length
 
   return (
@@ -1432,7 +1436,7 @@ function AreaChart({ data, colors, width, height, options, theme }: any) {
   const padding = { top: 20, right: 20, bottom: 40, left: 50 }
   const chartWidth = width - padding.left - padding.right
   const chartHeight = height - padding.top - padding.bottom
-  const maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data)) * 1.1
+  const _maxValue = Math.max(...data.datasets.flatMap((d: any) => d.data)) * 1.1
   const pointCount = data.labels.length
 
   return (
@@ -1515,7 +1519,7 @@ function AreaChart({ data, colors, width, height, options, theme }: any) {
 // ============================================
 
 function MapWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const center = widget.center ?? { lat: 40.7128, lng: -74.0060 }
   const zoom = widget.zoom ?? 12
   const height = widget.height ?? 300
@@ -1567,7 +1571,7 @@ function MapWidget_({ widget }: { widget: any }) {
 }
 
 function QRCodeWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const size = widget.size ?? 150
   
   // Generate QR code using Google Charts API (free, no key needed)
@@ -1598,7 +1602,7 @@ function QRCodeWidget_({ widget }: { widget: any }) {
 }
 
 function FilePreviewWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const { file } = widget
   
   const formatSize = (bytes: number) => {
@@ -1768,7 +1772,7 @@ function CodeWidget_({ widget }: { widget: any }) {
 }
 
 function CalendarWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [currentDate, setCurrentDate] = React.useState(new Date())
   const [view, setView] = React.useState(widget.view ?? 'month')
   
@@ -1905,7 +1909,7 @@ function CalendarWidget_({ widget }: { widget: any }) {
 }
 
 function TimelineWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const isVertical = widget.orientation !== 'horizontal'
   
   return (
@@ -1997,7 +2001,7 @@ function TimelineWidget_({ widget }: { widget: any }) {
 }
 
 function KanbanWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   
   return (
     <div style={{ display: 'flex', gap: 16, overflow: 'auto', paddingBottom: 8 }}>
@@ -2220,7 +2224,7 @@ function Sparkline({ data, color, height }: { data: number[]; color: string; hei
 }
 
 function CommentsWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [newComment, setNewComment] = React.useState('')
   
   return (
@@ -2420,7 +2424,7 @@ function SocialShareWidget_({ widget }: { widget: any }) {
 }
 
 function ComparisonWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   
   return (
     <div style={{ overflow: 'auto' }}>
@@ -2516,7 +2520,7 @@ function ComparisonWidget_({ widget }: { widget: any }) {
 }
 
 function CountdownWidget_({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft())
   
   function calculateTimeLeft() {
@@ -2718,7 +2722,7 @@ function ListViewWidget({ widget }: { widget: any }) {
 }
 
 function ListViewItemWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <div
@@ -2849,7 +2853,7 @@ function SpinnerWidget({ widget }: { widget: any }) {
 }
 
 function AlertWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   
   const severityStyles: Record<string, any> = {
     success: { bg: '#dcfce7', color: theme.colors.success, icon: '✓' },
@@ -2890,7 +2894,7 @@ function AlertWidget({ widget }: { widget: any }) {
 }
 
 function ConfirmationWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   
   const iconMap: Record<string, string> = {
     success: '✓',
@@ -2978,7 +2982,7 @@ function SuccessWidget({ widget }: { widget: any }) {
 }
 
 function ErrorWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <div style={{ textAlign: 'center', padding: 24 }}>
@@ -3047,7 +3051,7 @@ function ErrorWidget({ widget }: { widget: any }) {
 // ============================================
 
 function SearchWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [value, setValue] = React.useState(widget.value ?? '')
   const [focused, setFocused] = React.useState(false)
 
@@ -3130,7 +3134,7 @@ function SearchWidget({ widget }: { widget: any }) {
 }
 
 function BreadcrumbWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: sizeMap.sm }}>
@@ -3213,8 +3217,8 @@ function StepperWidget({ widget }: { widget: any }) {
 // ============================================
 
 function LoginWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
-  const [formData, setFormData] = React.useState<Record<string, string>>({})
+  const { theme } = React.useContext(WidgetContext)
+  const [_formData, _setFormData] = React.useState<Record<string, string>>({})
 
   return (
     <CardWidget widget={{ type: 'Card', padding: 24, children: [
@@ -3247,7 +3251,7 @@ function LoginWidget({ widget }: { widget: any }) {
 }
 
 function VerifyOTPWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [otp, setOtp] = React.useState<string[]>(Array(widget.length ?? 6).fill(''))
   const inputRefs = React.useRef<(HTMLInputElement | null)[]>([])
 
@@ -3362,7 +3366,7 @@ function RegisterWidget({ widget }: { widget: any }) {
 // ============================================
 
 function AddressFormWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const fields = widget.fields ?? {
     fullName: true,
     phone: true,
@@ -3513,7 +3517,7 @@ function AddressFormWidget({ widget }: { widget: any }) {
 }
 
 function AddressListWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <div>
@@ -3585,7 +3589,7 @@ function AddressListWidget({ widget }: { widget: any }) {
 // ============================================
 
 function ProductCardWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <div
@@ -3688,7 +3692,7 @@ function ProductGridWidget({ widget }: { widget: any }) {
 }
 
 function OrderSummaryWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const currency = widget.currency ?? '$'
 
   return (
@@ -3771,7 +3775,7 @@ function OrderSummaryWidget({ widget }: { widget: any }) {
 }
 
 function OrderTrackingWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   const statusColors: Record<string, string> = {
     processing: theme.colors.info,
@@ -3845,7 +3849,7 @@ function OrderTrackingWidget({ widget }: { widget: any }) {
 }
 
 function CheckoutWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <div>
@@ -3880,7 +3884,7 @@ function CheckoutWidget({ widget }: { widget: any }) {
 }
 
 function PaymentMethodWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [selected, setSelected] = React.useState(widget.methods?.find((m: any) => m.selected)?.id)
 
   return (
@@ -3947,7 +3951,7 @@ function PaymentMethodWidget({ widget }: { widget: any }) {
 }
 
 function InvoiceWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const currency = widget.currency ?? '$'
 
   const statusColors: Record<string, any> = {
@@ -4052,7 +4056,7 @@ function InvoiceWidget({ widget }: { widget: any }) {
 // ============================================
 
 function CategoryListWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
 
   return (
     <div>
@@ -4096,7 +4100,7 @@ function CategoryListWidget({ widget }: { widget: any }) {
 }
 
 function CategoryTreeWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set())
 
   return (
@@ -4173,8 +4177,8 @@ function CategoryTreeWidget({ widget }: { widget: any }) {
 // ============================================
 
 function ContactFormWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
-  const [formData, setFormData] = React.useState<Record<string, string>>({})
+  const { theme } = React.useContext(WidgetContext)
+  const [_formData, _setFormData] = React.useState<Record<string, string>>({})
 
   return (
     <div style={{ padding: 16 }}>
@@ -4252,12 +4256,12 @@ function ContactFormWidget({ widget }: { widget: any }) {
 }
 
 function FAQWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [openItems, setOpenItems] = React.useState<Set<string>>(
     new Set(widget.items?.filter((item: any) => item.open).map((item: any) => item.id) ?? [])
   )
-  const [searchQuery, setSearchQuery] = React.useState('')
-  const [activeCategory, setActiveCategory] = React.useState(widget.activeCategory)
+  const [searchQuery, _setSearchQuery] = React.useState('')
+  const [activeCategory, _setActiveCategory] = React.useState(widget.activeCategory)
 
   const filteredItems = widget.items?.filter((item: any) => {
     const matchesSearch = !searchQuery || 
@@ -4353,7 +4357,7 @@ function FAQWidget({ widget }: { widget: any }) {
 }
 
 function TermsWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
+  const { theme } = React.useContext(WidgetContext)
   const [accepted, setAccepted] = React.useState(false)
 
   return (
@@ -4405,8 +4409,8 @@ function TermsWidget({ widget }: { widget: any }) {
 // ============================================
 
 function FormWidget({ widget }: { widget: any }) {
-  const { onAction, theme } = React.useContext(WidgetContext)
-  const [formData, setFormData] = React.useState<Record<string, any>>({})
+  const { theme } = React.useContext(WidgetContext)
+  const [_formData, _setFormData] = React.useState<Record<string, any>>({})
 
   return (
     <form
