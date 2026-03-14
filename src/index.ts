@@ -38,6 +38,7 @@ export type {
   TitleWidget,
   CaptionWidget,
   MarkdownWidget,
+  LabelWidget,
   
   // Interactive
   ButtonWidget,
@@ -54,8 +55,6 @@ export type {
   UploadWidget,
   InputWidget,
   TextareaWidget,
-  LabelWidget,
-  ChartWidget,
   
   // Form
   FormWidget,
@@ -68,6 +67,11 @@ export type {
   AvatarWidget,
   VideoWidget,
   AudioWidget,
+  ChartWidget,
+  MapWidget,
+  QRCodeWidget,
+  FilePreviewWidget,
+  CodeWidget,
   
   // Lists
   ListViewWidget,
@@ -130,6 +134,16 @@ export type {
   // Notification
   NotificationWidget,
   NotificationListWidget,
+  
+  // Advanced
+  CalendarWidget,
+  TimelineWidget,
+  KanbanWidget,
+  StatsWidget,
+  CommentsWidget,
+  SocialShareWidget,
+  ComparisonWidget,
+  CountdownWidget,
   
   // Theme
   Theme,

@@ -368,6 +368,221 @@ export interface ChartWidget extends BaseWidget {
   colors?: string[]
 }
 
+// Map Widget
+export interface MapWidget extends BaseWidget {
+  type: 'Map'
+  center?: { lat: number; lng: number }
+  zoom?: number
+  markers?: Array<{
+    id: string
+    position: { lat: number; lng: number }
+    label?: string
+    icon?: string
+    color?: string
+    onClickAction?: WidgetAction
+  }>
+  polyline?: Array<{ lat: number; lng: number }>
+  polygon?: Array<{ lat: number; lng: number }>
+  style?: 'standard' | 'satellite' | 'terrain' | 'dark'
+  height?: number | string
+  showControls?: boolean
+  onMapClickAction?: WidgetAction
+}
+
+// Calendar Widget
+export interface CalendarWidget extends BaseWidget {
+  type: 'Calendar'
+  value?: string
+  view?: 'month' | 'week' | 'day' | 'agenda'
+  events?: Array<{
+    id: string
+    title: string
+    start: string
+    end?: string
+    allDay?: boolean
+    color?: string
+    description?: string
+    location?: string
+  }>
+  selectable?: boolean
+  editable?: boolean
+  showWeekends?: boolean
+  showNav?: boolean
+  minTime?: string
+  maxTime?: string
+  onDateSelectAction?: WidgetAction
+  onEventClickAction?: WidgetAction
+  onEventDropAction?: WidgetAction
+  onViewChangeAction?: WidgetAction
+}
+
+// Timeline Widget
+export interface TimelineWidget extends BaseWidget {
+  type: 'Timeline'
+  items: Array<{
+    id: string
+    title: string
+    description?: string
+    timestamp: string
+    icon?: string
+    color?: string
+    completed?: boolean
+    current?: boolean
+    children?: Widget[]
+  }>
+  orientation?: 'vertical' | 'horizontal'
+  alternate?: boolean
+  showLine?: boolean
+  lineColor?: string
+}
+
+// Kanban Widget
+export interface KanbanWidget extends BaseWidget {
+  type: 'Kanban'
+  columns: Array<{
+    id: string
+    title: string
+    color?: string
+    limit?: number
+    cards: Array<{
+      id: string
+      title: string
+      description?: string
+      label?: string
+      labelColor?: string
+      avatar?: string
+      dueDate?: string
+      priority?: 'low' | 'medium' | 'high'
+      tags?: string[]
+      onClickAction?: WidgetAction
+    }>
+  }>
+  onCardMoveAction?: WidgetAction
+  onCardClickAction?: WidgetAction
+  onAddCardAction?: WidgetAction
+}
+
+// Stats/Metric Widget
+export interface StatsWidget extends BaseWidget {
+  type: 'Stats'
+  title?: string
+  value: string | number
+  prefix?: string
+  suffix?: string
+  change?: {
+    value: number
+    type: 'increase' | 'decrease'
+    period?: string
+  }
+  icon?: string
+  color?: string
+  size?: 'sm' | 'md' | 'lg'
+  sparkline?: number[]
+}
+
+// Code Widget
+export interface CodeWidget extends BaseWidget {
+  type: 'Code'
+  code: string
+  language?: string
+  filename?: string
+  showLineNumbers?: boolean
+  highlightLines?: number[]
+  maxHeight?: number
+  theme?: 'light' | 'dark'
+  copyable?: boolean
+}
+
+// File Preview Widget
+export interface FilePreviewWidget extends BaseWidget {
+  type: 'FilePreview'
+  file: {
+    name: string
+    type: string
+    size: number
+    url?: string
+    thumbnail?: string
+  }
+  showActions?: boolean
+  onDownloadAction?: WidgetAction
+  onPreviewAction?: WidgetAction
+  onDeleteAction?: WidgetAction
+}
+
+// Comments Widget
+export interface CommentsWidget extends BaseWidget {
+  type: 'Comments'
+  comments: Array<{
+    id: string
+    author: { name: string; avatar?: string }
+    content: string
+    timestamp: string
+    likes?: number
+    replies?: Array<{
+      id: string
+      author: { name: string; avatar?: string }
+      content: string
+      timestamp: string
+    }>
+  }>
+  placeholder?: string
+  allowReplies?: boolean
+  allowLikes?: boolean
+  onSubmitAction?: WidgetAction
+  onReplyAction?: WidgetAction
+  onLikeAction?: WidgetAction
+}
+
+// Social Share Widget
+export interface SocialShareWidget extends BaseWidget {
+  type: 'SocialShare'
+  url: string
+  title?: string
+  description?: string
+  platforms?: Array<'twitter' | 'facebook' | 'linkedin' | 'whatsapp' | 'telegram' | 'email' | 'copy'>
+  style?: 'buttons' | 'icons' | 'dropdown'
+  size?: 'sm' | 'md' | 'lg'
+}
+
+// Comparison Widget
+export interface ComparisonWidget extends BaseWidget {
+  type: 'Comparison'
+  items: Array<{
+    id: string
+    title: string
+    image?: string
+    features: Record<string, string | number | boolean>
+    badge?: string
+    recommended?: boolean
+  }>
+  features: Array<{ key: string; label: string }>
+  onSelectAction?: WidgetAction
+}
+
+// Countdown Widget
+export interface CountdownWidget extends BaseWidget {
+  type: 'Countdown'
+  targetDate: string
+  title?: string
+  format?: 'dhms' | 'hms' | 'ms'
+  showDays?: boolean
+  showHours?: boolean
+  showMinutes?: boolean
+  showSeconds?: boolean
+  onCompleteAction?: WidgetAction
+}
+
+// QR Code Widget
+export interface QRCodeWidget extends BaseWidget {
+  type: 'QRCode'
+  value: string
+  size?: number
+  bgColor?: string
+  fgColor?: string
+  label?: string
+  onClickAction?: WidgetAction
+}
+
 // ============================================
 // Form Components
 // ============================================
@@ -1106,6 +1321,19 @@ export type Widget =
   | VideoWidget
   | AudioWidget
   | ChartWidget
+  | MapWidget
+  | QRCodeWidget
+  | FilePreviewWidget
+  | CodeWidget
+  // Advanced
+  | CalendarWidget
+  | TimelineWidget
+  | KanbanWidget
+  | StatsWidget
+  | CommentsWidget
+  | SocialShareWidget
+  | ComparisonWidget
+  | CountdownWidget
   // Layout Helpers
   | SpacerWidget
   | DividerWidget

@@ -169,6 +169,32 @@ function RenderWidget({ widget }: { widget: Widget }) {
       return <LabelWidget_ widget={widget} />
     case 'Chart':
       return <ChartWidget_ widget={widget} />
+    case 'Map':
+      return <MapWidget_ widget={widget} />
+    case 'QRCode':
+      return <QRCodeWidget_ widget={widget} />
+    case 'FilePreview':
+      return <FilePreviewWidget_ widget={widget} />
+    case 'Code':
+      return <CodeWidget_ widget={widget} />
+
+    // Advanced
+    case 'Calendar':
+      return <CalendarWidget_ widget={widget} />
+    case 'Timeline':
+      return <TimelineWidget_ widget={widget} />
+    case 'Kanban':
+      return <KanbanWidget_ widget={widget} />
+    case 'Stats':
+      return <StatsWidget_ widget={widget} />
+    case 'Comments':
+      return <CommentsWidget_ widget={widget} />
+    case 'SocialShare':
+      return <SocialShareWidget_ widget={widget} />
+    case 'Comparison':
+      return <ComparisonWidget_ widget={widget} />
+    case 'Countdown':
+      return <CountdownWidget_ widget={widget} />
 
     // Media
     case 'Image':
@@ -1481,6 +1507,1090 @@ function AreaChart({ data, colors, width, height, options, theme }: any) {
         )
       })}
     </g>
+  )
+}
+
+// ============================================
+// New Widgets
+// ============================================
+
+function MapWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const center = widget.center ?? { lat: 40.7128, lng: -74.0060 }
+  const zoom = widget.zoom ?? 12
+  const height = widget.height ?? 300
+  
+  // Simple static map using OpenStreetMap tiles
+  const tileUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${center.lng - 0.01}%2C${center.lat - 0.01}%2C${center.lng + 0.01}%2C${center.lat + 0.01}&layer=mapnik&marker=${center.lat}%2C${center.lng}`
+  
+  return (
+    <div style={{ borderRadius: theme.radius.lg, overflow: 'hidden', position: 'relative' }}>
+      <iframe
+        width="100%"
+        height={height}
+        style={{ border: 0 }}
+        loading="lazy"
+        src={tileUrl}
+      />
+      {widget.markers && widget.markers.length > 0 && (
+        <div style={{ 
+          position: 'absolute', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          background: 'rgba(255,255,255,0.9)', 
+          padding: 8,
+          maxHeight: 100,
+          overflow: 'auto'
+        }}>
+          {widget.markers.map((marker: any, i: number) => (
+            <div 
+              key={i}
+              onClick={() => marker.onClickAction && onAction(marker.onClickAction)}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 8, 
+                padding: '4px 8px',
+                cursor: marker.onClickAction ? 'pointer' : 'default',
+                borderRadius: theme.radius.sm,
+              }}
+            >
+              <span style={{ color: marker.color ?? theme.colors.primary }}>📍</span>
+              <span style={{ fontSize: sizeMap.sm }}>{marker.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function QRCodeWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const size = widget.size ?? 150
+  
+  // Generate QR code using Google Charts API (free, no key needed)
+  const qrUrl = `https://chart.googleapis.com/chart?chs=${size}x${size}&cht=qr&chl=${encodeURIComponent(widget.value)}&choe=UTF-8`
+  
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <img 
+        src={qrUrl} 
+        alt="QR Code" 
+        width={size} 
+        height={size}
+        onClick={() => widget.onClickAction && onAction(widget.onClickAction)}
+        style={{ 
+          cursor: widget.onClickAction ? 'pointer' : 'default',
+          background: widget.bgColor ?? '#fff',
+          padding: 10,
+          borderRadius: theme.radius.md,
+        }}
+      />
+      {widget.label && (
+        <div style={{ fontSize: sizeMap.sm, color: theme.colors.textSecondary, marginTop: 8 }}>
+          {widget.label}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function FilePreviewWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const { file } = widget
+  
+  const formatSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+  }
+  
+  const getIcon = (type: string) => {
+    if (type.startsWith('image/')) return '🖼️'
+    if (type.startsWith('video/')) return '🎬'
+    if (type.startsWith('audio/')) return '🎵'
+    if (type.includes('pdf')) return '📄'
+    if (type.includes('word') || type.includes('document')) return '📝'
+    if (type.includes('sheet') || type.includes('excel')) return '📊'
+    if (type.includes('zip') || type.includes('rar')) return '📦'
+    return '📎'
+  }
+  
+  return (
+    <div style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: 12, 
+      padding: 12,
+      border: `1px solid ${theme.colors.border}`,
+      borderRadius: theme.radius.md,
+      background: theme.colors.surface,
+    }}>
+      {file.thumbnail ? (
+        <img src={file.thumbnail} alt="" style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: theme.radius.sm }} />
+      ) : (
+        <div style={{ 
+          width: 48, 
+          height: 48, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          background: theme.colors.background,
+          borderRadius: theme.radius.sm,
+          fontSize: '1.5rem',
+        }}>
+          {getIcon(file.type)}
+        </div>
+      )}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {file.name}
+        </div>
+        <div style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary }}>
+          {formatSize(file.size)}
+        </div>
+      </div>
+      {widget.showActions !== false && (
+        <div style={{ display: 'flex', gap: 4 }}>
+          {widget.onPreviewAction && (
+            <button
+              onClick={() => onAction(widget.onPreviewAction)}
+              style={{ padding: '4px 8px', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              👁️
+            </button>
+          )}
+          {widget.onDownloadAction && (
+            <button
+              onClick={() => onAction(widget.onDownloadAction)}
+              style={{ padding: '4px 8px', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              ⬇️
+            </button>
+          )}
+          {widget.onDeleteAction && (
+            <button
+              onClick={() => onAction(widget.onDeleteAction)}
+              style={{ padding: '4px 8px', background: 'none', border: 'none', cursor: 'pointer', color: theme.colors.error }}
+            >
+              🗑️
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CodeWidget_({ widget }: { widget: any }) {
+  const [copied, setCopied] = React.useState(false)
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(widget.code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  
+  const lines = widget.code.split('\n')
+  
+  return (
+    <div style={{ 
+      background: widget.theme === 'dark' ? '#1e1e1e' : '#f6f8fa', 
+      borderRadius: styles.radius.md,
+      overflow: 'hidden',
+      fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+      fontSize: sizeMap.sm,
+    }}>
+      {widget.filename && (
+        <div style={{ 
+          padding: '8px 12px', 
+          borderBottom: `1px solid ${widget.theme === 'dark' ? '#333' : '#e1e4e8'}`,
+          color: widget.theme === 'dark' ? '#8b949e' : '#6a737d',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <span>{widget.filename}</span>
+          {widget.copyable !== false && (
+            <button 
+              onClick={handleCopy}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                cursor: 'pointer', 
+                color: 'inherit',
+                fontSize: sizeMap.xs,
+              }}
+            >
+              {copied ? '✓ Copied' : '📋 Copy'}
+            </button>
+          )}
+        </div>
+      )}
+      <div style={{ 
+        padding: 12, 
+        overflow: 'auto', 
+        maxHeight: widget.maxHeight,
+        color: widget.theme === 'dark' ? '#c9d1d9' : '#24292f',
+      }}>
+        <code style={{ whiteSpace: 'pre' }}>
+          {widget.showLineNumbers !== false ? (
+            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+              <tbody>
+                {lines.map((line: string, i: number) => {
+                  const isHighlighted = widget.highlightLines?.includes(i + 1)
+                  return (
+                    <tr key={i} style={{ background: isHighlighted ? (widget.theme === 'dark' ? '#264f78' : '#fff8c5') : 'transparent' }}>
+                      <td style={{ 
+                        width: 40, 
+                        color: widget.theme === 'dark' ? '#6e7681' : '#8b949e', 
+                        textAlign: 'right', 
+                        paddingRight: 12,
+                        userSelect: 'none',
+                      }}>
+                        {i + 1}
+                      </td>
+                      <td style={{ whiteSpace: 'pre' }}>{line || ' '}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          ) : (
+            widget.code
+          )}
+        </code>
+      </div>
+    </div>
+  )
+}
+
+function CalendarWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [currentDate, setCurrentDate] = React.useState(new Date())
+  const [view, setView] = React.useState(widget.view ?? 'month')
+  
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()
+  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()
+  
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  
+  const events = widget.events ?? []
+  
+  const getEventsForDay = (day: number) => {
+    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    return events.filter((e: any) => e.start.startsWith(dateStr))
+  }
+  
+  const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))
+  const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))
+  
+  return (
+    <div style={{ border: `1px solid ${theme.colors.border}`, borderRadius: theme.radius.lg, overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        padding: '12px 16px',
+        borderBottom: `1px solid ${theme.colors.border}`,
+      }}>
+        {widget.showNav !== false && (
+          <button onClick={prevMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: sizeMap.lg }}>←</button>
+        )}
+        <div style={{ fontWeight: 600 }}>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</div>
+        {widget.showNav !== false && (
+          <button onClick={nextMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: sizeMap.lg }}>→</button>
+        )}
+      </div>
+      
+      {/* Day names */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: `1px solid ${theme.colors.border}` }}>
+        {dayNames.map((day, i) => (
+          <div 
+            key={day} 
+            style={{ 
+              padding: '8px 4px', 
+              textAlign: 'center', 
+              fontSize: sizeMap.xs, 
+              fontWeight: 600,
+              color: theme.colors.textSecondary,
+              background: theme.colors.surface,
+            }}
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+      
+      {/* Days */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
+        {/* Empty cells for days before the first of the month */}
+        {Array.from({ length: firstDayOfMonth }, (_, i) => (
+          <div key={`empty-${i}`} style={{ height: 80, borderRight: `1px solid ${theme.colors.border}`, borderBottom: `1px solid ${theme.colors.border}` }} />
+        ))}
+        
+        {/* Days of the month */}
+        {Array.from({ length: daysInMonth }, (_, i) => {
+          const day = i + 1
+          const dayEvents = getEventsForDay(day)
+          const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString()
+          
+          return (
+            <div 
+              key={day}
+              onClick={() => widget.onDateSelectAction && onAction({ ...widget.onDateSelectAction, data: { date: `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${day}` } })}
+              style={{ 
+                height: 80, 
+                padding: 4, 
+                borderRight: `1px solid ${theme.colors.border}`, 
+                borderBottom: `1px solid ${theme.colors.border}`,
+                cursor: widget.onDateSelectAction ? 'pointer' : 'default',
+                background: isToday ? '#ecfdf5' : 'transparent',
+              }}
+            >
+              <div style={{ 
+                width: 24, 
+                height: 24, 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                borderRadius: '50%',
+                background: isToday ? theme.colors.primary : 'transparent',
+                color: isToday ? '#fff' : theme.colors.text,
+                fontWeight: isToday ? 600 : 400,
+                fontSize: sizeMap.sm,
+              }}>
+                {day}
+              </div>
+              <div style={{ marginTop: 2 }}>
+                {dayEvents.slice(0, 2).map((event: any, j: number) => (
+                  <div 
+                    key={j}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      widget.onEventClickAction && onAction({ ...widget.onEventClickAction, data: { eventId: event.id } })
+                    }}
+                    style={{ 
+                      fontSize: 10, 
+                      padding: '1px 4px', 
+                      borderRadius: 2, 
+                      marginBottom: 1,
+                      background: event.color ?? theme.colors.primary,
+                      color: '#fff',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {event.title}
+                  </div>
+                ))}
+                {dayEvents.length > 2 && (
+                  <div style={{ fontSize: 10, color: theme.colors.textSecondary }}>
+                    +{dayEvents.length - 2} more
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function TimelineWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const isVertical = widget.orientation !== 'horizontal'
+  
+  return (
+    <div style={{ 
+      display: isVertical ? 'block' : 'flex',
+      gap: isVertical ? 0 : 24,
+      position: 'relative',
+    }}>
+      {widget.showLine !== false && (
+        <div style={isVertical ? {
+          position: 'absolute',
+          left: 15,
+          top: 24,
+          bottom: 24,
+          width: 2,
+          background: widget.lineColor ?? theme.colors.border,
+        } : {
+          position: 'absolute',
+          left: 40,
+          right: 40,
+          top: 15,
+          height: 2,
+          background: widget.lineColor ?? theme.colors.border,
+        }} />
+      )}
+      
+      {widget.items.map((item: any, i: number) => (
+        <div 
+          key={item.id ?? i}
+          style={isVertical ? {
+            display: 'flex',
+            gap: 16,
+            marginBottom: i < widget.items.length - 1 ? 24 : 0,
+            position: 'relative',
+          } : {
+            flex: 1,
+            textAlign: 'center',
+            position: 'relative',
+          }}
+        >
+          {/* Icon/Dot */}
+          <div style={isVertical ? {
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            background: item.completed ? theme.colors.success : item.current ? theme.colors.primary : theme.colors.surface,
+            border: `2px solid ${item.completed ? theme.colors.success : item.current ? theme.colors.primary : theme.colors.border}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: item.completed || item.current ? '#fff' : theme.colors.text,
+            fontSize: sizeMap.sm,
+            zIndex: 1,
+          } : {
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            background: item.completed ? theme.colors.success : item.current ? theme.colors.primary : theme.colors.surface,
+            border: `2px solid ${item.completed ? theme.colors.success : item.current ? theme.colors.primary : theme.colors.border}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto',
+            color: item.completed || item.current ? '#fff' : theme.colors.text,
+            fontSize: sizeMap.sm,
+            zIndex: 1,
+          }}>
+            {item.icon ?? (item.completed ? '✓' : i + 1)}
+          </div>
+          
+          {/* Content */}
+          <div style={isVertical ? { flex: 1 } : { marginTop: 12 }}>
+            <div style={{ fontWeight: 500 }}>{item.title}</div>
+            {item.timestamp && (
+              <div style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary, marginTop: 2 }}>
+                {item.timestamp}
+              </div>
+            )}
+            {item.description && (
+              <div style={{ fontSize: sizeMap.sm, color: theme.colors.textSecondary, marginTop: 4 }}>
+                {item.description}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function KanbanWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  
+  return (
+    <div style={{ display: 'flex', gap: 16, overflow: 'auto', paddingBottom: 8 }}>
+      {widget.columns.map((column: any) => (
+        <div 
+          key={column.id}
+          style={{ 
+            width: 280, 
+            minWidth: 280,
+            flexShrink: 0,
+            background: theme.colors.surface,
+            borderRadius: theme.radius.lg,
+            padding: 12,
+          }}
+        >
+          {/* Column Header */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            marginBottom: 12,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ 
+                width: 8, 
+                height: 8, 
+                borderRadius: '50%', 
+                background: column.color ?? theme.colors.primary,
+              }} />
+              <span style={{ fontWeight: 600 }}>{column.title}</span>
+              <span style={{ 
+                fontSize: sizeMap.xs, 
+                color: theme.colors.textSecondary,
+                background: theme.colors.background,
+                padding: '2px 6px',
+                borderRadius: theme.radius.full,
+              }}>
+                {column.cards.length}
+              </span>
+            </div>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: theme.colors.textSecondary }}>
+              +
+            </button>
+          </div>
+          
+          {/* Cards */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {column.cards.map((card: any) => (
+              <div
+                key={card.id}
+                onClick={() => widget.onCardClickAction && onAction({ ...widget.onCardClickAction, data: { cardId: card.id, columnId: column.id } })}
+                style={{
+                  background: theme.colors.background,
+                  borderRadius: theme.radius.md,
+                  padding: 12,
+                  cursor: widget.onCardClickAction ? 'pointer' : 'default',
+                  border: `1px solid ${theme.colors.border}`,
+                }}
+              >
+                {card.label && (
+                  <div style={{ 
+                    fontSize: sizeMap.xs, 
+                    color: card.labelColor ?? theme.colors.primary,
+                    marginBottom: 4,
+                  }}>
+                    {card.label}
+                  </div>
+                )}
+                <div style={{ fontWeight: 500 }}>{card.title}</div>
+                {card.description && (
+                  <div style={{ fontSize: sizeMap.sm, color: theme.colors.textSecondary, marginTop: 4 }}>
+                    {card.description}
+                  </div>
+                )}
+                {card.tags && card.tags.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 8 }}>
+                    {card.tags.map((tag: string, j: number) => (
+                      <span 
+                        key={j}
+                        style={{ 
+                          fontSize: sizeMap.xs, 
+                          padding: '2px 6px', 
+                          background: theme.colors.surface, 
+                          borderRadius: theme.radius.sm,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                  {card.avatar && (
+                    <img src={card.avatar} alt="" style={{ width: 24, height: 24, borderRadius: '50%' }} />
+                  )}
+                  {card.dueDate && (
+                    <span style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary }}>
+                      📅 {card.dueDate}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Add Card Button */}
+          {widget.onAddCardAction && (
+            <button
+              onClick={() => onAction({ ...widget.onAddCardAction, data: { columnId: column.id } })}
+              style={{
+                width: '100%',
+                padding: 8,
+                marginTop: 8,
+                background: 'transparent',
+                border: `1px dashed ${theme.colors.border}`,
+                borderRadius: theme.radius.md,
+                cursor: 'pointer',
+                color: theme.colors.textSecondary,
+                fontSize: sizeMap.sm,
+              }}
+            >
+              + Add card
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function StatsWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  
+  const sizeStyles: Record<string, any> = {
+    sm: { padding: 12, valueSize: sizeMap.xl, titleSize: sizeMap.xs },
+    md: { padding: 16, valueSize: sizeMap['2xl'], titleSize: sizeMap.sm },
+    lg: { padding: 20, valueSize: sizeMap['3xl'], titleSize: sizeMap.md },
+  }
+  
+  const style = sizeStyles[widget.size ?? 'md']
+  
+  return (
+    <div style={{ 
+      padding: style.padding,
+      background: theme.colors.background,
+      borderRadius: theme.radius.lg,
+      border: `1px solid ${theme.colors.border}`,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div>
+          {widget.title && (
+            <div style={{ fontSize: style.titleSize, color: theme.colors.textSecondary, marginBottom: 4 }}>
+              {widget.title}
+            </div>
+          )}
+          <div style={{ fontSize: style.valueSize, fontWeight: 700, color: widget.color ?? theme.colors.text }}>
+            {widget.prefix}{widget.value}{widget.suffix}
+          </div>
+          {widget.change && (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 4, 
+              marginTop: 4,
+              fontSize: sizeMap.sm,
+            }}>
+              <span style={{ color: widget.change.type === 'increase' ? theme.colors.success : theme.colors.error }}>
+                {widget.change.type === 'increase' ? '↑' : '↓'} {Math.abs(widget.change.value)}%
+              </span>
+              {widget.change.period && (
+                <span style={{ color: theme.colors.textSecondary }}>{widget.change.period}</span>
+              )}
+            </div>
+          )}
+        </div>
+        {widget.icon && (
+          <div style={{ 
+            fontSize: sizeMap.xl, 
+            padding: 8, 
+            background: theme.colors.surface, 
+            borderRadius: theme.radius.md,
+          }}>
+            {widget.icon}
+          </div>
+        )}
+      </div>
+      {widget.sparkline && widget.sparkline.length > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <Sparkline data={widget.sparkline} color={widget.color ?? theme.colors.primary} height={40} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Sparkline({ data, color, height }: { data: number[]; color: string; height: number }) {
+  const width = 100
+  const max = Math.max(...data)
+  const min = Math.min(...data)
+  const range = max - min || 1
+  
+  const points = data.map((value, i) => {
+    const x = (i / (data.length - 1)) * width
+    const y = height - ((value - min) / range) * height
+    return `${x},${y}`
+  }).join(' ')
+  
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height }}>
+      <polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function CommentsWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [newComment, setNewComment] = React.useState('')
+  
+  return (
+    <div>
+      {/* Comment Input */}
+      <div style={{ marginBottom: 16 }}>
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder={widget.placeholder ?? 'Add a comment...'}
+          rows={2}
+          style={{
+            width: '100%',
+            padding: 8,
+            borderRadius: theme.radius.md,
+            border: `1px solid ${theme.colors.border}`,
+            fontSize: sizeMap.sm,
+            resize: 'none',
+          }}
+        />
+        {newComment && (
+          <button
+            onClick={() => {
+              widget.onSubmitAction && onAction({ ...widget.onSubmitAction, data: { content: newComment } })
+              setNewComment('')
+            }}
+            style={{
+              marginTop: 8,
+              padding: '6px 16px',
+              borderRadius: theme.radius.md,
+              border: 'none',
+              background: theme.colors.primary,
+              color: '#fff',
+              cursor: 'pointer',
+            }}
+          >
+            Post
+          </button>
+        )}
+      </div>
+      
+      {/* Comments List */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {widget.comments.map((comment: any) => (
+          <div key={comment.id} style={{ display: 'flex', gap: 12 }}>
+            {comment.author.avatar ? (
+              <img src={comment.author.avatar} alt="" style={{ width: 36, height: 36, borderRadius: '50%' }} />
+            ) : (
+              <div style={{ 
+                width: 36, 
+                height: 36, 
+                borderRadius: '50%', 
+                background: theme.colors.surface,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 600,
+              }}>
+                {comment.author.name.charAt(0)}
+              </div>
+            )}
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontWeight: 500 }}>{comment.author.name}</span>
+                <span style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary }}>{comment.timestamp}</span>
+              </div>
+              <div style={{ marginTop: 4 }}>{comment.content}</div>
+              {widget.allowLikes && (
+                <button style={{ 
+                  marginTop: 4, 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontSize: sizeMap.xs,
+                  color: theme.colors.textSecondary,
+                }}>
+                  ❤️ {comment.likes ?? 0}
+                </button>
+              )}
+              {comment.replies && comment.replies.length > 0 && (
+                <div style={{ marginTop: 8, marginLeft: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {comment.replies.map((reply: any) => (
+                    <div key={reply.id} style={{ display: 'flex', gap: 8 }}>
+                      <div style={{ 
+                        width: 24, 
+                        height: 24, 
+                        borderRadius: '50%', 
+                        background: theme.colors.surface,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: sizeMap.xs,
+                      }}>
+                        {reply.author.name.charAt(0)}
+                      </div>
+                      <div>
+                        <span style={{ fontWeight: 500, fontSize: sizeMap.sm }}>{reply.author.name}</span>
+                        <span style={{ marginLeft: 8, fontSize: sizeMap.sm }}>{reply.content}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SocialShareWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const [copied, setCopied] = React.useState(false)
+  
+  const platforms: Record<string, any> = {
+    twitter: { icon: '𝕏', color: '#000', getUrl: (url: string, title: string) => `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}` },
+    facebook: { icon: 'f', color: '#1877f2', getUrl: (url: string) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
+    linkedin: { icon: 'in', color: '#0a66c2', getUrl: (url: string, title: string) => `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}` },
+    whatsapp: { icon: '💬', color: '#25d366', getUrl: (url: string, title: string) => `https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}` },
+    telegram: { icon: '✈️', color: '#0088cc', getUrl: (url: string, title: string) => `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}` },
+    email: { icon: '✉️', color: '#666', getUrl: (url: string, title: string) => `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}` },
+  }
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(widget.url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  
+  const activePlatforms = widget.platforms ?? ['twitter', 'facebook', 'linkedin', 'whatsapp', 'email']
+  
+  if (widget.style === 'dropdown') {
+    return (
+      <div style={{ position: 'relative' }}>
+        <button style={{ 
+          padding: '8px 16px', 
+          borderRadius: theme.radius.md, 
+          border: `1px solid ${theme.colors.border}`,
+          background: theme.colors.background,
+          cursor: 'pointer',
+        }}>
+          Share ▼
+        </button>
+      </div>
+    )
+  }
+  
+  return (
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      {activePlatforms.map((platform: string) => {
+        const p = platforms[platform]
+        if (!p) return null
+        
+        return (
+          <a
+            key={platform}
+            href={p.getUrl(widget.url, widget.title ?? '')}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              width: widget.size === 'sm' ? 28 : widget.size === 'lg' ? 44 : 36,
+              height: widget.size === 'sm' ? 28 : widget.size === 'lg' ? 44 : 36,
+              borderRadius: theme.radius.md,
+              background: p.color,
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              fontSize: widget.size === 'sm' ? sizeMap.sm : sizeMap.md,
+              fontWeight: 600,
+            }}
+          >
+            {p.icon}
+          </a>
+        )
+      })}
+      {activePlatforms.includes('copy') && (
+        <button
+          onClick={handleCopy}
+          style={{
+            width: widget.size === 'sm' ? 28 : widget.size === 'lg' ? 44 : 36,
+            height: widget.size === 'sm' ? 28 : widget.size === 'lg' ? 44 : 36,
+            borderRadius: theme.radius.md,
+            border: `1px solid ${theme.colors.border}`,
+            background: copied ? theme.colors.success : theme.colors.background,
+            color: copied ? '#fff' : theme.colors.text,
+            cursor: 'pointer',
+          }}
+        >
+          {copied ? '✓' : '📋'}
+        </button>
+      )}
+    </div>
+  )
+}
+
+function ComparisonWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  
+  return (
+    <div style={{ overflow: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: sizeMap.sm }}>
+        <thead>
+          <tr>
+            <th style={{ padding: 12, textAlign: 'left', borderBottom: `2px solid ${theme.colors.border}` }}>
+              Feature
+            </th>
+            {widget.items.map((item: any) => (
+              <th 
+                key={item.id}
+                style={{ 
+                  padding: 12, 
+                  textAlign: 'center', 
+                  borderBottom: `2px solid ${theme.colors.border}`,
+                  background: item.recommended ? '#ecfdf5' : 'transparent',
+                  position: 'relative',
+                }}
+              >
+                {item.recommended && (
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: 0, 
+                    left: 0, 
+                    right: 0, 
+                    background: theme.colors.primary, 
+                    color: '#fff',
+                    fontSize: sizeMap.xs,
+                    padding: '2px 0',
+                  }}>
+                    Recommended
+                  </div>
+                )}
+                {item.image && (
+                  <img src={item.image} alt={item.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: theme.radius.md }} />
+                )}
+                <div style={{ fontWeight: 600, marginTop: 8 }}>{item.title}</div>
+                {item.badge && (
+                  <BadgeWidget widget={{ type: 'Badge', label: item.badge, color: 'primary', size: 'xs' }} />
+                )}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {widget.features.map((feature: any, i: number) => (
+            <tr key={i} style={{ background: i % 2 === 1 ? theme.colors.surface : 'transparent' }}>
+              <td style={{ padding: 12, fontWeight: 500 }}>{feature.label}</td>
+              {widget.items.map((item: any) => {
+                const value = item.features[feature.key]
+                return (
+                  <td key={item.id} style={{ padding: 12, textAlign: 'center' }}>
+                    {typeof value === 'boolean' ? (
+                      <span style={{ color: value ? theme.colors.success : theme.colors.error, fontSize: sizeMap.lg }}>
+                        {value ? '✓' : '✕'}
+                      </span>
+                    ) : (
+                      value
+                    )}
+                  </td>
+                )
+              })}
+            </tr>
+          ))}
+          {widget.onSelectAction && (
+            <tr>
+              <td style={{ padding: 12 }}></td>
+              {widget.items.map((item: any) => (
+                <td key={item.id} style={{ padding: 12, textAlign: 'center' }}>
+                  <button
+                    onClick={() => onAction({ ...widget.onSelectAction, data: { itemId: item.id } })}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: theme.radius.md,
+                      border: 'none',
+                      background: item.recommended ? theme.colors.primary : theme.colors.surface,
+                      color: item.recommended ? '#fff' : theme.colors.text,
+                      cursor: 'pointer',
+                      fontWeight: 500,
+                    }}
+                  >
+                    Select
+                  </button>
+                </td>
+              ))}
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function CountdownWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft())
+  
+  function calculateTimeLeft() {
+    const difference = new Date(widget.targetDate).getTime() - new Date().getTime()
+    
+    if (difference <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true }
+    }
+    
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
+      expired: false,
+    }
+  }
+  
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      const newTimeLeft = calculateTimeLeft()
+      setTimeLeft(newTimeLeft)
+      
+      if (newTimeLeft.expired) {
+        clearInterval(timer)
+        widget.onCompleteAction && onAction(widget.onCompleteAction)
+      }
+    }, 1000)
+    
+    return () => clearInterval(timer)
+  }, [widget.targetDate])
+  
+  const TimeBlock = ({ value, label }: { value: number; label: string }) => (
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ 
+        fontSize: sizeMap['3xl'], 
+        fontWeight: 700,
+        background: theme.colors.surface,
+        padding: '12px 16px',
+        borderRadius: theme.radius.md,
+        minWidth: 70,
+      }}>
+        {String(value).padStart(2, '0')}
+      </div>
+      <div style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary, marginTop: 4 }}>
+        {label}
+      </div>
+    </div>
+  )
+  
+  if (timeLeft.expired) {
+    return (
+      <div style={{ textAlign: 'center', padding: 20 }}>
+        <div style={{ fontSize: sizeMap.xl, fontWeight: 600, color: theme.colors.success }}>
+          ⏰ Time's up!
+        </div>
+      </div>
+    )
+  }
+  
+  return (
+    <div style={{ textAlign: 'center' }}>
+      {widget.title && (
+        <div style={{ fontSize: sizeMap.lg, fontWeight: 600, marginBottom: 16 }}>
+          {widget.title}
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+        {(widget.showDays !== false) && <TimeBlock value={timeLeft.days} label="Days" />}
+        {(widget.showHours !== false) && <TimeBlock value={timeLeft.hours} label="Hours" />}
+        {(widget.showMinutes !== false) && <TimeBlock value={timeLeft.minutes} label="Minutes" />}
+        {(widget.showSeconds !== false) && <TimeBlock value={timeLeft.seconds} label="Seconds" />}
+      </div>
+    </div>
   )
 }
 
