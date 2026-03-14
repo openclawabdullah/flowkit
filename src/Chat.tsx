@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react'
-import type { FlowKitAdapter, StreamEvent, Message, Widget, WidgetAction } from './types'
+import type { FlowKitAdapter, Message, Widget, WidgetAction } from './types'
 import { WidgetRenderer } from './WidgetRenderer'
 
 // ============================================
@@ -54,7 +54,6 @@ export function Chat({ adapter, placeholder, suggestions, onMessage, className, 
   const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const abortControllerRef = useRef<AbortController | null>(null)
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
