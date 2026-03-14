@@ -72,6 +72,8 @@ export type {
   QRCodeWidget,
   FilePreviewWidget,
   CodeWidget,
+  AudioPlayerWidget,
+  VideoPlayerWidget,
   
   // Lists
   ListViewWidget,
@@ -85,6 +87,7 @@ export type {
   
   // Feedback
   ProgressWidget,
+  CircularProgressWidget,
   SpinnerWidget,
   SkeletonWidget,
   AlertWidget,
@@ -92,6 +95,7 @@ export type {
   ConfirmationWidget,
   SuccessWidget,
   ErrorWidget,
+  NotificationBadgeWidget,
   
   // Auth
   LoginWidget,
@@ -115,6 +119,12 @@ export type {
   PaymentMethodWidget,
   InvoiceWidget,
   InvoiceListWidget,
+  QuantitySelectorWidget,
+  ColorSwatchesWidget,
+  SizeSelectorWidget,
+  StockIndicatorWidget,
+  DeliveryEstimateWidget,
+  CouponInputWidget,
   
   // Category
   CategoryListWidget,
@@ -144,6 +154,14 @@ export type {
   SocialShareWidget,
   ComparisonWidget,
   CountdownWidget,
+  ColorPickerWidget,
+  SignaturePadWidget,
+  RichTextEditorWidget,
+  CommandPaletteWidget,
+  AvatarGroupWidget,
+  PresenceIndicatorWidget,
+  TypingIndicatorWidget,
+  EmojiPickerWidget,
   
   // Theme
   Theme,

@@ -583,6 +583,245 @@ export interface QRCodeWidget extends BaseWidget {
   onClickAction?: WidgetAction
 }
 
+// Color Picker Widget
+export interface ColorPickerWidget extends BaseWidget {
+  type: 'ColorPicker'
+  name: string
+  value?: string
+  colors?: string[]
+  showHex?: boolean
+  showCustom?: boolean
+  size?: 'sm' | 'md' | 'lg'
+  onChangeAction?: WidgetAction
+}
+
+// Signature Pad Widget
+export interface SignaturePadWidget extends BaseWidget {
+  type: 'SignaturePad'
+  name: string
+  width?: number | string
+  height?: number | string
+  penColor?: string
+  backgroundColor?: string
+  lineWidth?: number
+  placeholder?: string
+  clearLabel?: string
+  onSaveAction?: WidgetAction
+  onClearAction?: WidgetAction
+}
+
+// Rich Text Editor Widget
+export interface RichTextEditorWidget extends BaseWidget {
+  type: 'RichTextEditor'
+  name: string
+  value?: string
+  placeholder?: string
+  minHeight?: number
+  maxHeight?: number
+  toolbar?: Array<'bold' | 'italic' | 'underline' | 'strike' | 'link' | 'heading' | 'list' | 'quote' | 'code'>
+  disabled?: boolean
+  onChangeAction?: WidgetAction
+  onBlurAction?: WidgetAction
+}
+
+// Command Palette Widget
+export interface CommandPaletteWidget extends BaseWidget {
+  type: 'CommandPalette'
+  placeholder?: string
+  commands: Array<{
+    id: string
+    label: string
+    icon?: string
+    shortcut?: string
+    category?: string
+    onClickAction: WidgetAction
+  }>
+  categories?: Array<{ id: string; label: string }>
+  recentCommands?: string[]
+  onSearchAction?: WidgetAction
+  onSelectAction?: WidgetAction
+}
+
+// Emoji Picker Widget
+export interface EmojiPickerWidget extends BaseWidget {
+  type: 'EmojiPicker'
+  categories?: Array<'smileys' | 'people' | 'animals' | 'food' | 'activities' | 'objects' | 'symbols' | 'flags'>
+  showSearch?: boolean
+  showSkinTones?: boolean
+  recentEmojis?: string[]
+  onSelectAction?: WidgetAction
+}
+
+// Avatar Group Widget
+export interface AvatarGroupWidget extends BaseWidget {
+  type: 'AvatarGroup'
+  avatars: Array<{
+    src?: string
+    name: string
+  }>
+  max?: number
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  onClickAction?: WidgetAction
+}
+
+// Quantity Selector Widget
+export interface QuantitySelectorWidget extends BaseWidget {
+  type: 'QuantitySelector'
+  name: string
+  value?: number
+  min?: number
+  max?: number
+  step?: number
+  size?: 'sm' | 'md' | 'lg'
+  disabled?: boolean
+  showInput?: boolean
+  onChangeAction?: WidgetAction
+}
+
+// Stock Indicator Widget
+export interface StockIndicatorWidget extends BaseWidget {
+  type: 'StockIndicator'
+  stock: number
+  showCount?: boolean
+  lowThreshold?: number
+  outOfStockLabel?: string
+  lowStockLabel?: string
+  inStockLabel?: string
+}
+
+// Delivery Estimate Widget
+export interface DeliveryEstimateWidget extends BaseWidget {
+  type: 'DeliveryEstimate'
+  minDays?: number
+  maxDays?: number
+  date?: string
+  showIcon?: boolean
+  showCalendar?: boolean
+  shippingMethod?: string
+  price?: number
+  currency?: string
+  isFree?: boolean
+}
+
+// Coupon Input Widget
+export interface CouponInputWidget extends BaseWidget {
+  type: 'CouponInput'
+  placeholder?: string
+  applied?: boolean
+  code?: string
+  discount?: string
+  applyLabel?: string
+  removeLabel?: string
+  onApplyAction?: WidgetAction
+  onRemoveAction?: WidgetAction
+}
+
+// Color Swatches Widget
+export interface ColorSwatchesWidget extends BaseWidget {
+  type: 'ColorSwatches'
+  name: string
+  colors: Array<{
+    value: string
+    label?: string
+    color: string
+    image?: string
+    disabled?: boolean
+  }>
+  selected?: string
+  showLabel?: boolean
+  size?: 'sm' | 'md' | 'lg'
+  onChangeAction?: WidgetAction
+}
+
+// Size Selector Widget
+export interface SizeSelectorWidget extends BaseWidget {
+  type: 'SizeSelector'
+  name: string
+  sizes: Array<{
+    value: string
+    label: string
+    disabled?: boolean
+    outOfStock?: boolean
+  }>
+  selected?: string
+  showLabel?: boolean
+  onChangeAction?: WidgetAction
+}
+
+// Circular Progress Widget
+export interface CircularProgressWidget extends BaseWidget {
+  type: 'CircularProgress'
+  value?: number
+  max?: number
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  thickness?: number
+  color?: string
+  trackColor?: string
+  showValue?: boolean
+  label?: string
+}
+
+// Audio Player Widget
+export interface AudioPlayerWidget extends BaseWidget {
+  type: 'AudioPlayer'
+  src: string
+  title?: string
+  artist?: string
+  cover?: string
+  autoplay?: boolean
+  loop?: boolean
+  muted?: boolean
+  showProgress?: boolean
+  showVolume?: boolean
+  showTime?: boolean
+}
+
+// Video Player Widget  
+export interface VideoPlayerWidget extends BaseWidget {
+  type: 'VideoPlayer'
+  src: string
+  poster?: string
+  title?: string
+  width?: number | string
+  height?: number | string
+  autoplay?: boolean
+  controls?: boolean
+  loop?: boolean
+  muted?: boolean
+  playbackSpeed?: boolean
+  fullscreen?: boolean
+}
+
+// Notification Badge Widget
+export interface NotificationBadgeWidget extends BaseWidget {
+  type: 'NotificationBadge'
+  count?: number
+  max?: number
+  showZero?: boolean
+  dot?: boolean
+  color?: string
+  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+  children?: Widget
+  onClickAction?: WidgetAction
+}
+
+// Presence Indicator Widget
+export interface PresenceIndicatorWidget extends BaseWidget {
+  type: 'PresenceIndicator'
+  status: 'online' | 'offline' | 'away' | 'busy' | 'invisible'
+  size?: 'sm' | 'md' | 'lg'
+  showLabel?: boolean
+  label?: string
+}
+
+// Typing Indicator Widget
+export interface TypingIndicatorWidget extends BaseWidget {
+  type: 'TypingIndicator'
+  users?: string[]
+  text?: string
+  size?: 'sm' | 'md' | 'lg'
+}
+
 // ============================================
 // Form Components
 // ============================================
@@ -1334,6 +1573,22 @@ export type Widget =
   | SocialShareWidget
   | ComparisonWidget
   | CountdownWidget
+  | ColorPickerWidget
+  | SignaturePadWidget
+  | RichTextEditorWidget
+  | CommandPaletteWidget
+  | QuantitySelectorWidget
+  | ColorSwatchesWidget
+  | SizeSelectorWidget
+  | CircularProgressWidget
+  | AudioPlayerWidget
+  | VideoPlayerWidget
+  | NotificationBadgeWidget
+  | PresenceIndicatorWidget
+  | TypingIndicatorWidget
+  | StockIndicatorWidget
+  | DeliveryEstimateWidget
+  | CouponInputWidget
   // Layout Helpers
   | SpacerWidget
   | DividerWidget

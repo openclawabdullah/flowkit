@@ -199,6 +199,36 @@ function RenderWidget({ widget }: { widget: Widget }) {
       return <ComparisonWidget_ widget={widget} />
     case 'Countdown':
       return <CountdownWidget_ widget={widget} />
+    case 'ColorPicker':
+      return <ColorPickerWidget_ widget={widget} />
+    case 'SignaturePad':
+      return <SignaturePadWidget_ widget={widget} />
+    case 'RichTextEditor':
+      return <RichTextEditorWidget_ widget={widget} />
+    case 'CommandPalette':
+      return <CommandPaletteWidget_ widget={widget} />
+    case 'QuantitySelector':
+      return <QuantitySelectorWidget_ widget={widget} />
+    case 'StockIndicator':
+      return <StockIndicatorWidget_ widget={widget} />
+    case 'DeliveryEstimate':
+      return <DeliveryEstimateWidget_ widget={widget} />
+    case 'CouponInput':
+      return <CouponInputWidget_ widget={widget} />
+    case 'ColorSwatches':
+      return <ColorSwatchesWidget_ widget={widget} />
+    case 'SizeSelector':
+      return <SizeSelectorWidget_ widget={widget} />
+    case 'CircularProgress':
+      return <CircularProgressWidget_ widget={widget} />
+    case 'AudioPlayer':
+      return <AudioPlayerWidget_ widget={widget} />
+    case 'NotificationBadge':
+      return <NotificationBadgeWidget_ widget={widget} />
+    case 'PresenceIndicator':
+      return <PresenceIndicatorWidget_ widget={widget} />
+    case 'TypingIndicator':
+      return <TypingIndicatorWidget_ widget={widget} />
 
     // Media
     case 'Image':
@@ -2615,6 +2645,1054 @@ function ImageWidget({ widget }: { widget: any }) {
         maxWidth: '100%',
       }}
     />
+  )
+}
+
+// ============================================
+// New Widgets
+// ============================================
+
+function ColorPickerWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [selectedColor, setSelectedColor] = React.useState(widget.value ?? '')
+  const [customColor, setCustomColor] = React.useState('')
+  
+  const defaultColors = [
+    '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e',
+    '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6',
+    '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899',
+  ]
+  
+  const colors = widget.colors ?? defaultColors
+  const size = widget.size ?? 'md'
+  const sizeMap_: Record<string, number> = { sm: 24, md: 32, lg: 40 }
+  
+  return (
+    <div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: widget.showCustom ? 12 : 0 }}>
+        {colors.map((color: string, i: number) => (
+          <button
+            key={i}
+            onClick={() => {
+              setSelectedColor(color)
+              widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: color } })
+            }}
+            style={{
+              width: sizeMap_[size],
+              height: sizeMap_[size],
+              borderRadius: theme.radius.md,
+              border: selectedColor === color ? `3px solid ${theme.colors.text}` : `1px solid ${theme.colors.border}`,
+              background: color,
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+              transform: selectedColor === color ? 'scale(1.1)' : 'scale(1)',
+            }}
+          />
+        ))}
+      </div>
+      {widget.showCustom && (
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input
+            type="color"
+            value={customColor || selectedColor}
+            onChange={(e) => setCustomColor(e.target.value)}
+            style={{ width: 40, height: 40, border: 'none', cursor: 'pointer' }}
+          />
+          <input
+            type="text"
+            value={customColor || selectedColor}
+            onChange={(e) => setCustomColor(e.target.value)}
+            placeholder="#000000"
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              borderRadius: theme.radius.md,
+              border: `1px solid ${theme.colors.border}`,
+              fontSize: sizeMap.sm,
+            }}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SignaturePadWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+  const [isDrawing, setIsDrawing] = React.useState(false)
+  const [hasSignature, setHasSignature] = React.useState(false)
+  
+  const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    
+    setIsDrawing(true)
+    const rect = canvas.getBoundingClientRect()
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    ctx.beginPath()
+    ctx.moveTo(clientX - rect.left, clientY - rect.top)
+  }
+  
+  const draw = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDrawing) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    
+    setHasSignature(true)
+    const rect = canvas.getBoundingClientRect()
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    ctx.lineTo(clientX - rect.left, clientY - rect.top)
+    ctx.strokeStyle = widget.penColor ?? '#000'
+    ctx.lineWidth = widget.lineWidth ?? 2
+    ctx.lineCap = 'round'
+    ctx.stroke()
+  }
+  
+  const stopDrawing = () => setIsDrawing(false)
+  
+  const clear = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    setHasSignature(false)
+    widget.onClearAction && onAction(widget.onClearAction)
+  }
+  
+  const save = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const dataUrl = canvas.toDataURL()
+    widget.onSaveAction && onAction({ ...widget.onSaveAction, data: { signature: dataUrl } })
+  }
+  
+  return (
+    <div>
+      <canvas
+        ref={canvasRef}
+        width={widget.width ?? 400}
+        height={widget.height ?? 200}
+        onMouseDown={startDrawing}
+        onMouseMove={draw}
+        onMouseUp={stopDrawing}
+        onMouseLeave={stopDrawing}
+        onTouchStart={startDrawing}
+        onTouchMove={draw}
+        onTouchEnd={stopDrawing}
+        style={{
+          border: `1px solid ${theme.colors.border}`,
+          borderRadius: theme.radius.md,
+          background: widget.backgroundColor ?? '#fff',
+          cursor: 'crosshair',
+          touchAction: 'none',
+        }}
+      />
+      {!hasSignature && (
+        <div style={{ 
+          position: 'relative', 
+          top: -110, 
+          left: 0, 
+          right: 0, 
+          textAlign: 'center', 
+          color: theme.colors.textSecondary,
+          pointerEvents: 'none',
+        }}>
+          {widget.placeholder ?? 'Sign here'}
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <button
+          onClick={clear}
+          style={{
+            padding: '8px 16px',
+            borderRadius: theme.radius.md,
+            border: `1px solid ${theme.colors.border}`,
+            background: 'transparent',
+            cursor: 'pointer',
+          }}
+        >
+          {widget.clearLabel ?? 'Clear'}
+        </button>
+        <button
+          onClick={save}
+          disabled={!hasSignature}
+          style={{
+            padding: '8px 16px',
+            borderRadius: theme.radius.md,
+            border: 'none',
+            background: hasSignature ? theme.colors.primary : theme.colors.border,
+            color: '#fff',
+            cursor: hasSignature ? 'pointer' : 'not-allowed',
+          }}
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function RichTextEditorWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [content, setContent] = React.useState(widget.value ?? '')
+  
+  const toolbar = widget.toolbar ?? ['bold', 'italic', 'link', 'list']
+  
+  const applyFormat = (format: string) => {
+    // Simple formatting - in real implementation would use contenteditable
+    const selection = window.getSelection()
+    if (!selection) return
+    
+    const wrappers: Record<string, [string, string]> = {
+      bold: ['**', '**'],
+      italic: ['_', '_'],
+      strike: ['~~', '~~'],
+      code: ['`', '`'],
+    }
+    
+    if (wrappers[format]) {
+      const [start, end] = wrappers[format]
+      const newContent = content + `${start}${selection.toString()}${end}`
+      setContent(newContent)
+      widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: newContent } })
+    }
+  }
+  
+  return (
+    <div style={{ border: `1px solid ${theme.colors.border}`, borderRadius: theme.radius.md, overflow: 'hidden' }}>
+      {/* Toolbar */}
+      <div style={{ 
+        display: 'flex', 
+        gap: 4, 
+        padding: '8px 12px', 
+        borderBottom: `1px solid ${theme.colors.border}`,
+        background: theme.colors.surface,
+      }}>
+        {toolbar.includes('bold') && (
+          <button onClick={() => applyFormat('bold')} style={toolbarBtn}>B</button>
+        )}
+        {toolbar.includes('italic') && (
+          <button onClick={() => applyFormat('italic')} style={toolbarBtn}><em>I</em></button>
+        )}
+        {toolbar.includes('underline') && (
+          <button onClick={() => applyFormat('underline')} style={toolbarBtn}><u>U</u></button>
+        )}
+        {toolbar.includes('strike') && (
+          <button onClick={() => applyFormat('strike')} style={toolbarBtn}><s>S</s></button>
+        )}
+        {toolbar.includes('link') && (
+          <button style={toolbarBtn}>🔗</button>
+        )}
+        {toolbar.includes('heading') && (
+          <button style={toolbarBtn}>H</button>
+        )}
+        {toolbar.includes('list') && (
+          <button style={toolbarBtn}>☰</button>
+        )}
+        {toolbar.includes('code') && (
+          <button style={toolbarBtn}>&lt;/&gt;</button>
+        )}
+      </div>
+      {/* Editor */}
+      <textarea
+        value={content}
+        onChange={(e) => {
+          setContent(e.target.value)
+          widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: e.target.value } })
+        }}
+        placeholder={widget.placeholder ?? 'Start typing...'}
+        disabled={widget.disabled}
+        style={{
+          width: '100%',
+          minHeight: widget.minHeight ?? 150,
+          maxHeight: widget.maxHeight,
+          padding: 12,
+          border: 'none',
+          fontSize: sizeMap.sm,
+          resize: 'vertical',
+          outline: 'none',
+          fontFamily: 'inherit',
+          lineHeight: 1.6,
+        }}
+      />
+    </div>
+  )
+}
+
+const toolbarBtn: React.CSSProperties = {
+  padding: '4px 8px',
+  border: 'none',
+  background: 'transparent',
+  cursor: 'pointer',
+  borderRadius: 4,
+  fontWeight: 600,
+  fontSize: 14,
+}
+
+function CommandPaletteWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [query, setQuery] = React.useState('')
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  
+  const filteredCommands = widget.commands.filter((cmd: any) =>
+    cmd.label.toLowerCase().includes(query.toLowerCase())
+  )
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setSelectedIndex(prev => Math.min(prev + 1, filteredCommands.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setSelectedIndex(prev => Math.max(prev - 1, 0))
+    } else if (e.key === 'Enter' && filteredCommands[selectedIndex]) {
+      const cmd = filteredCommands[selectedIndex]
+      cmd.onClickAction && onAction(cmd.onClickAction)
+    }
+  }
+  
+  // Group by category
+  const grouped: Record<string, any[]> = {}
+  filteredCommands.forEach((cmd: any) => {
+    const category = cmd.category ?? 'General'
+    if (!grouped[category]) grouped[category] = []
+    grouped[category].push(cmd)
+  })
+  
+  return (
+    <div style={{ 
+      width: 500, 
+      maxWidth: '100%',
+      background: theme.colors.background, 
+      borderRadius: theme.radius.lg,
+      boxShadow: theme.shadows.lg,
+      overflow: 'hidden',
+    }}>
+      {/* Search */}
+      <div style={{ padding: 12, borderBottom: `1px solid ${theme.colors.border}` }}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={widget.placeholder ?? 'Search commands...'}
+          autoFocus
+          style={{
+            width: '100%',
+            padding: '8px 12px',
+            border: 'none',
+            background: theme.colors.surface,
+            borderRadius: theme.radius.md,
+            fontSize: sizeMap.md,
+            outline: 'none',
+          }}
+        />
+      </div>
+      {/* Commands */}
+      <div style={{ maxHeight: 400, overflow: 'auto', padding: 8 }}>
+        {Object.entries(grouped).map(([category, commands]) => (
+          <div key={category}>
+            <div style={{ 
+              padding: '8px 12px', 
+              fontSize: sizeMap.xs, 
+              color: theme.colors.textSecondary,
+              fontWeight: 600,
+            }}>
+              {category}
+            </div>
+            {commands.map((cmd: any, i: number) => {
+              const globalIndex = filteredCommands.indexOf(cmd)
+              return (
+                <div
+                  key={cmd.id}
+                  onClick={() => cmd.onClickAction && onAction(cmd.onClickAction)}
+                  onMouseEnter={() => setSelectedIndex(globalIndex)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    borderRadius: theme.radius.md,
+                    cursor: 'pointer',
+                    background: selectedIndex === globalIndex ? theme.colors.surface : 'transparent',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    {cmd.icon && <span style={{ fontSize: 16 }}>{cmd.icon}</span>}
+                    <span>{cmd.label}</span>
+                  </div>
+                  {cmd.shortcut && (
+                    <kbd style={{ 
+                      padding: '2px 6px', 
+                      background: theme.colors.surface, 
+                      borderRadius: 4, 
+                      fontSize: sizeMap.xs,
+                      fontFamily: 'monospace',
+                    }}>
+                      {cmd.shortcut}
+                    </kbd>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        ))}
+        {filteredCommands.length === 0 && (
+          <div style={{ textAlign: 'center', padding: 24, color: theme.colors.textSecondary }}>
+            No commands found
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function QuantitySelectorWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [value, setValue] = React.useState(widget.value ?? 1)
+  const min = widget.min ?? 1
+  const max = widget.max ?? 99
+  const step = widget.step ?? 1
+  
+  const increment = () => {
+    if (value + step <= max) {
+      const newValue = value + step
+      setValue(newValue)
+      widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: newValue } })
+    }
+  }
+  
+  const decrement = () => {
+    if (value - step >= min) {
+      const newValue = value - step
+      setValue(newValue)
+      widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: newValue } })
+    }
+  }
+  
+  const size = widget.size ?? 'md'
+  const sizeStyles: Record<string, any> = {
+    sm: { btn: 24, fontSize: sizeMap.sm },
+    md: { btn: 32, fontSize: sizeMap.md },
+    lg: { btn: 40, fontSize: sizeMap.lg },
+  }
+  
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <button
+        onClick={decrement}
+        disabled={widget.disabled || value <= min}
+        style={{
+          width: sizeStyles[size].btn,
+          height: sizeStyles[size].btn,
+          borderRadius: theme.radius.md,
+          border: `1px solid ${theme.colors.border}`,
+          background: 'transparent',
+          cursor: widget.disabled || value <= min ? 'not-allowed' : 'pointer',
+          fontSize: sizeStyles[size].fontSize,
+          opacity: value <= min ? 0.5 : 1,
+        }}
+      >
+        −
+      </button>
+      {widget.showInput !== false ? (
+        <input
+          type="number"
+          value={value}
+          min={min}
+          max={max}
+          onChange={(e) => {
+            const newValue = Math.max(min, Math.min(max, parseInt(e.target.value) || min))
+            setValue(newValue)
+            widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: newValue } })
+          }}
+          disabled={widget.disabled}
+          style={{
+            width: 60,
+            height: sizeStyles[size].btn,
+            textAlign: 'center',
+            border: `1px solid ${theme.colors.border}`,
+            borderRadius: theme.radius.md,
+            fontSize: sizeStyles[size].fontSize,
+          }}
+        />
+      ) : (
+        <span style={{ 
+          minWidth: 40, 
+          textAlign: 'center', 
+          fontSize: sizeStyles[size].fontSize,
+          fontWeight: 500,
+        }}>
+          {value}
+        </span>
+      )}
+      <button
+        onClick={increment}
+        disabled={widget.disabled || value >= max}
+        style={{
+          width: sizeStyles[size].btn,
+          height: sizeStyles[size].btn,
+          borderRadius: theme.radius.md,
+          border: `1px solid ${theme.colors.border}`,
+          background: 'transparent',
+          cursor: widget.disabled || value >= max ? 'not-allowed' : 'pointer',
+          fontSize: sizeStyles[size].fontSize,
+          opacity: value >= max ? 0.5 : 1,
+        }}
+      >
+        +
+      </button>
+    </div>
+  )
+}
+
+function StockIndicatorWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const stock = widget.stock ?? 0
+  const lowThreshold = widget.lowThreshold ?? 10
+  
+  let status: 'out' | 'low' | 'in'
+  let color: string
+  let text: string
+  
+  if (stock === 0) {
+    status = 'out'
+    color = theme.colors.error
+    text = widget.outOfStockLabel ?? 'Out of Stock'
+  } else if (stock <= lowThreshold) {
+    status = 'low'
+    color = theme.colors.warning
+    text = widget.lowStockLabel ?? `Only ${stock} left`
+  } else {
+    status = 'in'
+    color = theme.colors.success
+    text = widget.inStockLabel ?? 'In Stock'
+  }
+  
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        background: color,
+        animation: status === 'low' ? 'pulse 2s infinite' : undefined,
+      }} />
+      <span style={{ fontSize: sizeMap.sm, color, fontWeight: 500 }}>
+        {text}
+      </span>
+      {widget.showCount && stock > 0 && (
+        <span style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary }}>
+          ({stock} available)
+        </span>
+      )}
+    </div>
+  )
+}
+
+function DeliveryEstimateWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const minDays = widget.minDays ?? 3
+  const maxDays = widget.maxDays ?? 5
+  
+  const formatDate = (days: number) => {
+    const date = new Date()
+    date.setDate(date.getDate() + days)
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  }
+  
+  const dateRange = minDays === maxDays 
+    ? formatDate(minDays)
+    : `${formatDate(minDays)} - ${formatDate(maxDays)}`
+  
+  return (
+    <div style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: 12,
+      padding: 12,
+      background: theme.colors.surface,
+      borderRadius: theme.radius.md,
+    }}>
+      {widget.showIcon !== false && (
+        <span style={{ fontSize: 24 }}>🚚</span>
+      )}
+      <div>
+        <div style={{ fontSize: sizeMap.sm, fontWeight: 500 }}>
+          {widget.title ?? 'Estimated Delivery'}
+        </div>
+        <div style={{ fontSize: sizeMap.md, fontWeight: 600 }}>
+          {widget.date ?? dateRange}
+        </div>
+        {widget.shippingMethod && (
+          <div style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary }}>
+            {widget.shippingMethod}
+            {widget.isFree ? ' - FREE' : widget.price ? ` - $${widget.price}` : ''}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function CouponInputWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [code, setCode] = React.useState(widget.code ?? '')
+  const applied = widget.applied ?? false
+  
+  if (applied) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        padding: 12,
+        background: '#dcfce7',
+        borderRadius: theme.radius.md,
+        border: `1px solid ${theme.colors.success}`,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ color: theme.colors.success }}>✓</span>
+          <span style={{ fontWeight: 500 }}>{code}</span>
+          {widget.discount && (
+            <BadgeWidget widget={{ type: 'Badge', label: widget.discount, color: 'success', size: 'xs' }} />
+          )}
+        </div>
+        <button
+          onClick={() => widget.onRemoveAction && onAction(widget.onRemoveAction)}
+          style={{ background: 'none', border: 'none', color: theme.colors.error, cursor: 'pointer' }}
+        >
+          {widget.removeLabel ?? 'Remove'}
+        </button>
+      </div>
+    )
+  }
+  
+  return (
+    <div style={{ display: 'flex', gap: 8 }}>
+      <input
+        type="text"
+        value={code}
+        onChange={(e) => setCode(e.target.value.toUpperCase())}
+        placeholder={widget.placeholder ?? 'Enter coupon code'}
+        style={{
+          flex: 1,
+          padding: '8px 12px',
+          borderRadius: theme.radius.md,
+          border: `1px solid ${theme.colors.border}`,
+          fontSize: sizeMap.sm,
+          textTransform: 'uppercase',
+        }}
+      />
+      <button
+        onClick={() => widget.onApplyAction && onAction({ ...widget.onApplyAction, data: { code } })}
+        disabled={!code}
+        style={{
+          padding: '8px 16px',
+          borderRadius: theme.radius.md,
+          border: 'none',
+          background: code ? theme.colors.primary : theme.colors.border,
+          color: '#fff',
+          cursor: code ? 'pointer' : 'not-allowed',
+          fontWeight: 500,
+        }}
+      >
+        {widget.applyLabel ?? 'Apply'}
+      </button>
+    </div>
+  )
+}
+
+function ColorSwatchesWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [selected, setSelected] = React.useState(widget.selected ?? '')
+  
+  const size = widget.size ?? 'md'
+  const sizeMap_: Record<string, number> = { sm: 24, md: 32, lg: 40 }
+  
+  return (
+    <div>
+      {widget.showLabel && (
+        <div style={{ marginBottom: 8, fontWeight: 500 }}>Color: {widget.colors.find((c: any) => c.value === selected)?.label ?? ''}</div>
+      )}
+      <div style={{ display: 'flex', gap: 8 }}>
+        {widget.colors.map((color: any, i: number) => (
+          <button
+            key={i}
+            onClick={() => {
+              if (!color.disabled) {
+                setSelected(color.value)
+                widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: color.value } })
+              }
+            }}
+            disabled={color.disabled}
+            title={color.label}
+            style={{
+              width: sizeMap_[size],
+              height: sizeMap_[size],
+              borderRadius: '50%',
+              border: selected === color.value ? `3px solid ${theme.colors.text}` : `1px solid ${theme.colors.border}`,
+              background: `url(${color.image}) center/cover, ${color.color}`,
+              cursor: color.disabled ? 'not-allowed' : 'pointer',
+              opacity: color.disabled ? 0.4 : 1,
+              transition: 'transform 0.2s',
+              transform: selected === color.value ? 'scale(1.1)' : 'scale(1)',
+              position: 'relative',
+            }}
+          >
+            {color.disabled && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                right: 0,
+                height: 1,
+                background: theme.colors.error,
+                transform: 'rotate(-45deg)',
+              }} />
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SizeSelectorWidget_({ widget }: { widget: any }) {
+  const { onAction, theme } = React.useContext(WidgetContext)
+  const [selected, setSelected] = React.useState(widget.selected ?? '')
+  
+  return (
+    <div>
+      {widget.showLabel && (
+        <div style={{ marginBottom: 8, fontWeight: 500 }}>Size: {widget.sizes.find((s: any) => s.value === selected)?.label ?? ''}</div>
+      )}
+      <div style={{ display: 'flex', gap: 8 }}>
+        {widget.sizes.map((size: any, i: number) => (
+          <button
+            key={i}
+            onClick={() => {
+              if (!size.disabled && !size.outOfStock) {
+                setSelected(size.value)
+                widget.onChangeAction && onAction({ ...widget.onChangeAction, data: { value: size.value } })
+              }
+            }}
+            disabled={size.disabled || size.outOfStock}
+            style={{
+              padding: '8px 16px',
+              borderRadius: theme.radius.md,
+              border: selected === size.value 
+                ? `2px solid ${theme.colors.primary}`
+                : `1px solid ${size.disabled || size.outOfStock ? theme.colors.border : theme.colors.border}`,
+              background: selected === size.value ? '#ecfdf5' : 'transparent',
+              color: size.disabled || size.outOfStock ? theme.colors.textSecondary : theme.colors.text,
+              cursor: size.disabled || size.outOfStock ? 'not-allowed' : 'pointer',
+              fontWeight: selected === size.value ? 600 : 400,
+              textDecoration: size.outOfStock ? 'line-through' : 'none',
+              position: 'relative',
+            }}
+          >
+            {size.label}
+            {size.outOfStock && !size.disabled && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                right: 0,
+                height: 1,
+                background: theme.colors.error,
+                transform: 'rotate(-10deg)',
+              }} />
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function CircularProgressWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const value = widget.value ?? 0
+  const max = widget.max ?? 100
+  const percentage = (value / max) * 100
+  
+  const size = widget.size ?? 'md'
+  const sizeMap_: Record<string, number> = { sm: 48, md: 64, lg: 80, xl: 96 }
+  const dimension = sizeMap_[size]
+  const strokeWidth = widget.thickness ?? 4
+  const radius = (dimension - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (percentage / 100) * circumference
+  
+  return (
+    <div style={{ position: 'relative', width: dimension, height: dimension }}>
+      <svg width={dimension} height={dimension} style={{ transform: 'rotate(-90deg)' }}>
+        {/* Track */}
+        <circle
+          cx={dimension / 2}
+          cy={dimension / 2}
+          r={radius}
+          fill="none"
+          stroke={widget.trackColor ?? theme.colors.surface}
+          strokeWidth={strokeWidth}
+        />
+        {/* Progress */}
+        <circle
+          cx={dimension / 2}
+          cy={dimension / 2}
+          r={radius}
+          fill="none"
+          stroke={widget.color ?? theme.colors.primary}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          style={{ transition: 'stroke-dashoffset 0.3s' }}
+        />
+      </svg>
+      {(widget.showValue || widget.label) && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+        }}>
+          {widget.showValue && (
+            <div style={{ fontSize: sizeMap.lg, fontWeight: 600 }}>
+              {Math.round(percentage)}%
+            </div>
+          )}
+          {widget.label && (
+            <div style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary }}>
+              {widget.label}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AudioPlayerWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const [isPlaying, setIsPlaying] = React.useState(false)
+  const [currentTime, setCurrentTime] = React.useState(0)
+  const [duration, setDuration] = React.useState(0)
+  const audioRef = React.useRef<HTMLAudioElement>(null)
+  
+  const togglePlay = () => {
+    if (!audioRef.current) return
+    if (isPlaying) {
+      audioRef.current.pause()
+    } else {
+      audioRef.current.play()
+    }
+    setIsPlaying(!isPlaying)
+  }
+  
+  const formatTime = (time: number) => {
+    const mins = Math.floor(time / 60)
+    const secs = Math.floor(time % 60)
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+  
+  return (
+    <div style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: 12,
+      padding: 12,
+      background: theme.colors.surface,
+      borderRadius: theme.radius.lg,
+    }}>
+      <audio
+        ref={audioRef}
+        src={widget.src}
+        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onEnded={() => setIsPlaying(false)}
+      />
+      
+      {/* Play/Pause */}
+      <button
+        onClick={togglePlay}
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: '50%',
+          border: 'none',
+          background: theme.colors.primary,
+          color: '#fff',
+          fontSize: 20,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {isPlaying ? '⏸' : '▶'}
+      </button>
+      
+      {/* Info & Progress */}
+      <div style={{ flex: 1 }}>
+        {widget.title && (
+          <div style={{ fontWeight: 500, marginBottom: 4 }}>{widget.title}</div>
+        )}
+        {widget.artist && (
+          <div style={{ fontSize: sizeMap.sm, color: theme.colors.textSecondary, marginBottom: 8 }}>
+            {widget.artist}
+          </div>
+        )}
+        {widget.showProgress !== false && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary, minWidth: 40 }}>
+              {formatTime(currentTime)}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={duration || 100}
+              value={currentTime}
+              onChange={(e) => {
+                if (audioRef.current) {
+                  audioRef.current.currentTime = parseFloat(e.target.value)
+                }
+              }}
+              style={{ flex: 1 }}
+            />
+            <span style={{ fontSize: sizeMap.xs, color: theme.colors.textSecondary, minWidth: 40 }}>
+              {formatTime(duration)}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function NotificationBadgeWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const count = widget.count ?? 0
+  const max = widget.max ?? 99
+  
+  if (!widget.showZero && count === 0 && !widget.dot) {
+    return <>{widget.children}</>
+  }
+  
+  const displayCount = count > max ? `${max}+` : count
+  
+  return (
+    <div style={{ position: 'relative', display: 'inline-flex' }}>
+      {widget.children}
+      {(widget.dot || count > 0 || widget.showZero) && (
+        <div style={{
+          position: 'absolute',
+          top: widget.position?.includes('bottom') ? 'auto' : -4,
+          bottom: widget.position?.includes('bottom') ? -4 : 'auto',
+          left: widget.position?.includes('right') ? 'auto' : -4,
+          right: widget.position?.includes('right') ? -4 : 'auto',
+          minWidth: widget.dot ? 8 : 18,
+          height: widget.dot ? 8 : 18,
+          borderRadius: '50%',
+          background: widget.color ?? theme.colors.error,
+          color: '#fff',
+          fontSize: sizeMap.xs,
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: widget.dot ? 0 : '0 4px',
+          border: '2px solid #fff',
+        }}>
+          {!widget.dot && displayCount}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PresenceIndicatorWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const status = widget.status ?? 'offline'
+  
+  const statusConfig: Record<string, { color: string; label: string }> = {
+    online: { color: theme.colors.success, label: 'Online' },
+    offline: { color: theme.colors.textSecondary, label: 'Offline' },
+    away: { color: theme.colors.warning, label: 'Away' },
+    busy: { color: theme.colors.error, label: 'Busy' },
+    invisible: { color: theme.colors.border, label: 'Invisible' },
+  }
+  
+  const config = statusConfig[status] ?? statusConfig.offline
+  const size = widget.size ?? 'md'
+  const sizeMap_: Record<string, number> = { sm: 8, md: 10, lg: 12 }
+  
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{
+        width: sizeMap_[size],
+        height: sizeMap_[size],
+        borderRadius: '50%',
+        background: config.color,
+        border: '2px solid #fff',
+        boxShadow: '0 0 0 2px rgba(0,0,0,0.1)',
+      }} />
+      {(widget.showLabel || widget.label) && (
+        <span style={{ fontSize: sizeMap.sm, color: theme.colors.textSecondary }}>
+          {widget.label ?? config.label}
+        </span>
+      )}
+    </div>
+  )
+}
+
+function TypingIndicatorWidget_({ widget }: { widget: any }) {
+  const { theme } = React.useContext(WidgetContext)
+  const size = widget.size ?? 'md'
+  const sizeMap_: Record<string, number> = { sm: 4, md: 6, lg: 8 }
+  
+  if (widget.users && widget.users.length > 0) {
+    const text = widget.text ?? `${widget.users.slice(0, 2).join(', ')} ${widget.users.length > 2 ? `and ${widget.users.length - 2} others` : ''} ${widget.users.length === 1 ? 'is' : 'are'} typing`
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 3 }}>
+          {[0, 1, 2].map(i => (
+            <div key={i} style={{
+              width: sizeMap_[size],
+              height: sizeMap_[size],
+              borderRadius: '50%',
+              background: theme.colors.textSecondary,
+              animation: `typing 1.4s ease-in-out ${i * 0.16}s infinite`,
+            }} />
+          ))}
+        </div>
+        <span style={{ fontSize: sizeMap.sm, color: theme.colors.textSecondary }}>{text}</span>
+      </div>
+    )
+  }
+  
+  return (
+    <div style={{ display: 'flex', gap: 3, padding: 4 }}>
+      {[0, 1, 2].map(i => (
+        <div key={i} style={{
+          width: sizeMap_[size],
+          height: sizeMap_[size],
+          borderRadius: '50%',
+          background: theme.colors.textSecondary,
+          animation: `typing 1.4s ease-in-out ${i * 0.16}s infinite`,
+        }} />
+      ))}
+    </div>
   )
 }
 
