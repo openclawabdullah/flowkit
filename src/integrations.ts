@@ -105,6 +105,30 @@ export {
   type FlowKitProviderProps,
 } from '../context'
 
+// Theming
+export {
+  themes,
+  lightTheme,
+  darkTheme,
+  openaiTheme,
+  midnightTheme,
+  sunsetTheme,
+  forestTheme,
+  oceanTheme,
+  roseTheme,
+  purpleTheme,
+  cyberpunkTheme,
+  ThemeProvider,
+  useThemeColors,
+  buildTheme,
+  ThemeSwitcher,
+  type FlowKitTheme,
+  type ThemeName,
+  type ThemeProviderProps as ThemingProviderProps,
+  type ThemeSwitcherProps,
+  type BuildThemeOptions,
+} from '../theming'
+
 // JSON Utilities (already exported from main, but include here for completeness)
 export {
   unescapeLLMJson,
@@ -131,3 +155,28 @@ export {
   MCP_SERVER_TEMPLATE,
   FASTMCP_SERVER_TEMPLATE,
 } from './mcp'
+
+// Theming
+export {
+  themes,
+  lightTheme,
+  darkTheme,
+  openaiTheme,
+  midnightTheme,
+  sunsetTheme,
+  forestTheme,
+  oceanTheme,
+  roseTheme,
+  purpleTheme,
+  cyberpunkTheme,
+  ThemeProvider,
+  useTheme,
+  useThemeColors,
+  buildTheme,
+  ThemeSwitcher,
+  type FlowKitTheme,
+  type ThemeName,
+  type BuildThemeOptions,
+  type ThemeProviderProps as ThemingProviderProps,
+  type ThemeSwitcherProps,
+} from '../theming'

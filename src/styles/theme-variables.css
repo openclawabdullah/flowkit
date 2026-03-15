@@ -1,0 +1,288 @@
+/**
+ * FlowKit - Theme CSS Variables
+ * 
+ * CSS variables that work with ThemeProvider.
+ * These are automatically set by the theme provider.
+ */
+
+:root {
+  /* Colors - Light theme defaults */
+  --flowkit-primary: #10a37f;
+  --flowkit-primaryHover: #0d8a6a;
+  --flowkit-primaryLight: #ecfdf5;
+  --flowkit-primaryDark: #059669;
+  
+  --flowkit-secondary: #6b7280;
+  --flowkit-success: #22c55e;
+  --flowkit-warning: #f59e0b;
+  --flowkit-error: #ef4444;
+  --flowkit-info: #3b82f6;
+  
+  --flowkit-background: #ffffff;
+  --flowkit-surface: #f7f7f8;
+  --flowkit-surfaceHover: #ececf1;
+  
+  --flowkit-text: #202123;
+  --flowkit-textSecondary: #6b7280;
+  --flowkit-textMuted: #9ca3af;
+  
+  --flowkit-border: #e5e5e5;
+  --flowkit-borderDark: #d1d5db;
+  
+  --flowkit-userBubble: #10a37f;
+  --flowkit-userBubbleText: #ffffff;
+  --flowkit-assistantBubble: #f7f7f8;
+  --flowkit-assistantBubbleText: #202123;
+  
+  --flowkit-inputBackground: #f7f7f8;
+  --flowkit-inputBorder: #e5e5e5;
+  --flowkit-inputFocusBorder: #10a37f;
+  --flowkit-inputPlaceholder: #9ca3af;
+  
+  /* Fonts */
+  --flowkit-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  --flowkit-font-mono: Monaco, Menlo, "Ubuntu Mono", monospace;
+  
+  /* Border Radius */
+  --flowkit-radius-sm: 0.375rem;
+  --flowkit-radius-md: 0.5rem;
+  --flowkit-radius-lg: 0.75rem;
+  --flowkit-radius-xl: 1rem;
+  --flowkit-radius-full: 9999px;
+  
+  /* Shadows */
+  --flowkit-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --flowkit-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --flowkit-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --flowkit-shadow-widget: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --flowkit-shadow-widgetHover: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Dark theme overrides */
+.theme-dark {
+  --flowkit-background: #1a1a1a;
+  --flowkit-surface: #2a2a2a;
+  --flowkit-surfaceHover: #3a3a3a;
+  
+  --flowkit-text: #ffffff;
+  --flowkit-textSecondary: #a1a1aa;
+  --flowkit-textMuted: #71717a;
+  
+  --flowkit-border: #3a3a3a;
+  --flowkit-borderDark: #4a4a4a;
+  
+  --flowkit-assistantBubble: #2a2a2a;
+  
+  --flowkit-inputBackground: #2a2a2a;
+  --flowkit-inputBorder: #3a3a3a;
+  --flowkit-inputPlaceholder: #71717a;
+  
+  --flowkit-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --flowkit-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --flowkit-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --flowkit-shadow-widget: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --flowkit-shadow-widgetHover: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Theme-aware components using CSS variables */
+.flowkit-themed {
+  /* Chat container */
+  --chat-bg: var(--flowkit-background);
+  --chat-surface: var(--flowkit-surface);
+  --chat-text: var(--flowkit-text);
+  --chat-text-secondary: var(--flowkit-textSecondary);
+  --chat-border: var(--flowkit-border);
+  --chat-primary: var(--flowkit-primary);
+  
+  background-color: var(--chat-bg);
+  color: var(--chat-text);
+  font-family: var(--flowkit-font-sans);
+}
+
+/* Bubbles */
+.flowkit-bubble-user-themed {
+  background-color: var(--flowkit-userBubble);
+  color: var(--flowkit-userBubbleText);
+  border-radius: var(--flowkit-radius-xl);
+  border-bottom-right-radius: var(--flowkit-radius-sm);
+}
+
+.flowkit-bubble-assistant-themed {
+  background-color: var(--flowkit-assistantBubble);
+  color: var(--flowkit-assistantBubbleText);
+  border-radius: var(--flowkit-radius-xl);
+  border-bottom-left-radius: var(--flowkit-radius-sm);
+}
+
+/* Input */
+.flowkit-input-themed {
+  background-color: var(--flowkit-inputBackground);
+  border: 1px solid var(--flowkit-inputBorder);
+  color: var(--flowkit-text);
+  border-radius: var(--flowkit-radius-xl);
+}
+
+.flowkit-input-themed:focus-within {
+  border-color: var(--flowkit-inputFocusBorder);
+  box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+}
+
+.flowkit-input-themed input,
+.flowkit-input-themed textarea {
+  background-color: transparent;
+  color: var(--flowkit-text);
+}
+
+.flowkit-input-themed input::placeholder,
+.flowkit-input-themed textarea::placeholder {
+  color: var(--flowkit-inputPlaceholder);
+}
+
+/* Buttons */
+.flowkit-btn-primary-themed {
+  background-color: var(--flowkit-primary);
+  color: white;
+  border-radius: var(--flowkit-radius-md);
+}
+
+.flowkit-btn-primary-themed:hover {
+  background-color: var(--flowkit-primaryHover);
+}
+
+.flowkit-btn-secondary-themed {
+  background-color: var(--flowkit-surface);
+  color: var(--flowkit-text);
+  border: 1px solid var(--flowkit-border);
+  border-radius: var(--flowkit-radius-md);
+}
+
+.flowkit-btn-secondary-themed:hover {
+  background-color: var(--flowkit-surfaceHover);
+}
+
+/* Widgets */
+.flowkit-widget-themed {
+  background-color: var(--flowkit-background);
+  border: 1px solid var(--flowkit-border);
+  border-radius: var(--flowkit-radius-lg);
+  box-shadow: var(--flowkit-shadow-widget);
+}
+
+.flowkit-widget-themed:hover {
+  box-shadow: var(--flowkit-shadow-widgetHover);
+}
+
+/* Cards */
+.flowkit-card-themed {
+  background-color: var(--flowkit-background);
+  border: 1px solid var(--flowkit-border);
+  border-radius: var(--flowkit-radius-lg);
+  padding: 1rem;
+  box-shadow: var(--flowkit-shadow-widget);
+}
+
+/* Badges */
+.flowkit-badge-themed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--flowkit-radius-full);
+}
+
+.flowkit-badge-primary-themed {
+  background-color: var(--flowkit-primaryLight);
+  color: var(--flowkit-primaryDark);
+}
+
+.flowkit-badge-success-themed {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.flowkit-badge-warning-themed {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.flowkit-badge-error-themed {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+/* Progress */
+.flowkit-progress-themed {
+  height: 0.5rem;
+  background-color: var(--flowkit-surface);
+  border-radius: var(--flowkit-radius-full);
+  overflow: hidden;
+}
+
+.flowkit-progress-bar-themed {
+  height: 100%;
+  background-color: var(--flowkit-primary);
+  border-radius: var(--flowkit-radius-full);
+  transition: width 0.3s ease-out;
+}
+
+/* Alerts */
+.flowkit-alert-themed {
+  padding: 1rem;
+  border-radius: var(--flowkit-radius-lg);
+  border: 1px solid;
+}
+
+.flowkit-alert-success-themed {
+  background-color: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #15803d;
+}
+
+.flowkit-alert-error-themed {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #b91c1c;
+}
+
+.flowkit-alert-warning-themed {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #b45309;
+}
+
+.flowkit-alert-info-themed {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #1d4ed8;
+}
+
+/* System preference detection */
+@media (prefers-color-scheme: dark) {
+  .flowkit-auto-theme {
+    --flowkit-background: #1a1a1a;
+    --flowkit-surface: #2a2a2a;
+    --flowkit-surfaceHover: #3a3a3a;
+    --flowkit-text: #ffffff;
+    --flowkit-textSecondary: #a1a1aa;
+    --flowkit-textMuted: #71717a;
+    --flowkit-border: #3a3a3a;
+    --flowkit-borderDark: #4a4a4a;
+    --flowkit-assistantBubble: #2a2a2a;
+    --flowkit-inputBackground: #2a2a2a;
+    --flowkit-inputBorder: #3a3a3a;
+    --flowkit-inputPlaceholder: #71717a;
+  }
+}
+
+/* Animation for theme transitions */
+.flowkit-theme-transition,
+.flowkit-theme-transition *,
+.flowkit-theme-transition *::before,
+.flowkit-theme-transition *::after {
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
