@@ -112,3 +112,12 @@ export {
   parseWidgetsFromLLM,
   stringifyWidgetsForLLM,
 } from '../json-utils'
+
+// LangChain Integration
+export {
+  LangChainAdapter,
+  LangChainWidgetParser,
+  LANGCHAIN_TOOLS,
+  PYTHON_LANGCHAIN_EXAMPLE,
+  type LangChainConfig,
+} from './langchain'
