@@ -179,3 +179,6 @@ export {
   parseWidgetsFromLLM,
   stringifyWidgetsForLLM,
 } from './json-utils'
+
+// Integration Helpers (Adapters, Schema Generator, Streaming, Validator, Builder, Context)
+export * from './integrations'
