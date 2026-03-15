@@ -171,3 +171,11 @@ export type {
 
 // Default export
 export { default } from './Chat'
+
+// JSON Utilities for LLM integration
+export {
+  unescapeLLMJson,
+  parseLLMJson,
+  parseWidgetsFromLLM,
+  stringifyWidgetsForLLM,
+} from './json-utils'
