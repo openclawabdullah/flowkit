@@ -172,6 +172,10 @@ export type {
 // Default export
 export { default } from './Chat'
 
+// Chat Components
+export { Chat } from './Chat'
+export { TailwindChat } from './TailwindChat'
+
 // JSON Utilities for LLM integration
 export {
   unescapeLLMJson,

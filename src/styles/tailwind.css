@@ -1,0 +1,407 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OpenAI-inspired base styles */
+@layer base {
+  body {
+    @apply antialiased text-flowkit-text font-sans;
+  }
+}
+
+/* Custom components */
+@layer components {
+  /* Chat Container */
+  .flowkit-chat {
+    @apply flex flex-col h-full bg-flowkit-background;
+  }
+  
+  /* Messages Area */
+  .flowkit-messages {
+    @apply flex-1 overflow-y-auto px-4 py-6 space-y-6;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+  
+  .flowkit-messages::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .flowkit-messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .flowkit-messages::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  
+  /* Message Bubble */
+  .flowkit-message {
+    @apply flex gap-4 animate-slide-up;
+  }
+  
+  .flowkit-message-user {
+    @apply justify-end;
+  }
+  
+  .flowkit-message-assistant {
+    @apply justify-start;
+  }
+  
+  /* User Bubble */
+  .flowkit-bubble-user {
+    @apply bg-flowkit-user text-white px-4 py-3 rounded-2xl rounded-br-md max-w-[80%] shadow-chat-lg;
+  }
+  
+  /* Assistant Bubble */
+  .flowkit-bubble-assistant {
+    @apply bg-flowkit-surface text-flowkit-text px-4 py-3 rounded-2xl rounded-bl-md max-w-[80%] shadow-chat;
+  }
+  
+  /* Widget Container */
+  .flowkit-widget {
+    @apply bg-white rounded-xl border border-flowkit-border shadow-widget hover:shadow-widget-hover transition-shadow duration-200 overflow-hidden;
+  }
+  
+  /* Input Container */
+  .flowkit-input-container {
+    @apply px-4 py-3 border-t border-flowkit-border bg-flowkit-background;
+  }
+  
+  .flowkit-input-wrapper {
+    @apply flex items-end gap-2 bg-flowkit-surface rounded-2xl px-4 py-2 border border-flowkit-border focus-within:border-flowkit-primary focus-within:ring-1 focus-within:ring-flowkit-primary/20 transition-all;
+  }
+  
+  .flowkit-input {
+    @apply flex-1 bg-transparent border-none outline-none resize-none text-flowkit-text placeholder:text-flowkit-text-secondary text-base leading-relaxed;
+  }
+  
+  .flowkit-send-button {
+    @apply w-9 h-9 rounded-xl bg-flowkit-primary text-white font-medium flex items-center justify-center transition-all duration-200 hover:bg-flowkit-primary-hover disabled:bg-flowkit-border disabled:cursor-not-allowed;
+  }
+  
+  /* Typing Indicator */
+  .flowkit-typing {
+    @apply flex items-center gap-2 text-flowkit-text-secondary text-sm px-4 py-2;
+  }
+  
+  .flowkit-typing-dot {
+    @apply w-2 h-2 rounded-full bg-flowkit-primary animate-typing-dot;
+  }
+  
+  .flowkit-typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .flowkit-typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  /* Suggestion Chips */
+  .flowkit-suggestions {
+    @apply flex flex-wrap gap-2 justify-center mt-4;
+  }
+  
+  .flowkit-suggestion {
+    @apply px-4 py-2 rounded-full border border-flowkit-border bg-white text-flowkit-text-secondary text-sm font-medium transition-all duration-200 hover:bg-flowkit-surface hover:border-flowkit-primary hover:text-flowkit-primary cursor-pointer;
+  }
+  
+  /* Welcome Screen */
+  .flowkit-welcome {
+    @apply flex flex-col items-center justify-center h-full text-center px-8;
+  }
+  
+  .flowkit-welcome-icon {
+    @apply text-6xl mb-4;
+  }
+  
+  .flowkit-welcome-title {
+    @apply text-2xl font-semibold text-flowkit-text mb-2;
+  }
+  
+  .flowkit-welcome-subtitle {
+    @apply text-flowkit-text-secondary mb-8;
+  }
+  
+  /* Card Widget */
+  .flowkit-card {
+    @apply bg-white rounded-xl border border-flowkit-border p-4 shadow-widget;
+  }
+  
+  .flowkit-card-interactive {
+    @apply cursor-pointer hover:shadow-widget-hover hover:border-flowkit-primary/30 transition-all duration-200;
+  }
+  
+  /* Button Widget */
+  .flowkit-button {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .flowkit-button-primary {
+    @apply bg-flowkit-primary text-white hover:bg-flowkit-primary-hover active:scale-[0.98];
+  }
+  
+  .flowkit-button-secondary {
+    @apply bg-flowkit-surface text-flowkit-text border border-flowkit-border hover:bg-flowkit-surface-hover;
+  }
+  
+  .flowkit-button-outline {
+    @apply bg-transparent text-flowkit-primary border-2 border-flowkit-primary hover:bg-flowkit-primary/5;
+  }
+  
+  .flowkit-button-ghost {
+    @apply bg-transparent text-flowkit-text-secondary hover:bg-flowkit-surface;
+  }
+  
+  /* Badge Widget */
+  .flowkit-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .flowkit-badge-primary {
+    @apply bg-emerald-50 text-emerald-700;
+  }
+  
+  .flowkit-badge-success {
+    @apply bg-green-50 text-green-700;
+  }
+  
+  .flowkit-badge-warning {
+    @apply bg-amber-50 text-amber-700;
+  }
+  
+  .flowkit-badge-danger {
+    @apply bg-red-50 text-red-700;
+  }
+  
+  .flowkit-badge-info {
+    @apply bg-blue-50 text-blue-700;
+  }
+  
+  /* Input Widget */
+  .flowkit-field {
+    @apply flex flex-col gap-1.5;
+  }
+  
+  .flowkit-label {
+    @apply text-sm font-medium text-flowkit-text;
+  }
+  
+  .flowkit-label-required::after {
+    content: ' *';
+    @apply text-red-500;
+  }
+  
+  .flowkit-input-field {
+    @apply w-full px-3 py-2 text-sm border border-flowkit-border rounded-lg bg-white text-flowkit-text placeholder:text-flowkit-text-secondary focus:outline-none focus:border-flowkit-primary focus:ring-1 focus:ring-flowkit-primary/20 transition-all;
+  }
+  
+  .flowkit-textarea {
+    @apply flowkit-input-field min-h-[80px] resize-y;
+  }
+  
+  .flowkit-field-error {
+    @apply text-xs text-red-500 mt-1;
+  }
+  
+  .flowkit-field-helper {
+    @apply text-xs text-flowkit-text-secondary mt-1;
+  }
+  
+  /* Product Card Widget */
+  .flowkit-product-card {
+    @apply bg-white rounded-xl border border-flowkit-border overflow-hidden shadow-widget hover:shadow-widget-hover transition-all duration-200 cursor-pointer;
+  }
+  
+  .flowkit-product-image {
+    @apply w-full h-48 object-cover bg-flowkit-surface;
+  }
+  
+  .flowkit-product-content {
+    @apply p-4;
+  }
+  
+  .flowkit-product-title {
+    @apply font-semibold text-flowkit-text truncate mb-1;
+  }
+  
+  .flowkit-product-price {
+    @apply text-lg font-bold text-flowkit-primary;
+  }
+  
+  .flowkit-product-original-price {
+    @apply text-sm text-flowkit-text-secondary line-through ml-2;
+  }
+  
+  .flowkit-product-rating {
+    @apply flex items-center gap-1 text-sm text-amber-500 mt-2;
+  }
+  
+  /* Order Summary Widget */
+  .flowkit-order-summary {
+    @apply bg-flowkit-surface rounded-xl p-4 border border-flowkit-border;
+  }
+  
+  .flowkit-order-item {
+    @apply flex items-center gap-3 py-3 border-b border-flowkit-border last:border-0;
+  }
+  
+  .flowkit-order-item-image {
+    @apply w-12 h-12 rounded-lg object-cover bg-white;
+  }
+  
+  .flowkit-order-totals {
+    @apply mt-4 pt-4 border-t border-flowkit-border space-y-2;
+  }
+  
+  .flowkit-order-total-row {
+    @apply flex justify-between text-sm;
+  }
+  
+  .flowkit-order-total-row-final {
+    @apply text-base font-bold pt-2;
+  }
+  
+  /* Alert Widget */
+  .flowkit-alert {
+    @apply flex items-start gap-3 p-4 rounded-lg border;
+  }
+  
+  .flowkit-alert-success {
+    @apply bg-green-50 border-green-200 text-green-800;
+  }
+  
+  .flowkit-alert-error {
+    @apply bg-red-50 border-red-200 text-red-800;
+  }
+  
+  .flowkit-alert-warning {
+    @apply bg-amber-50 border-amber-200 text-amber-800;
+  }
+  
+  .flowkit-alert-info {
+    @apply bg-blue-50 border-blue-200 text-blue-800;
+  }
+  
+  /* Confirmation Widget */
+  .flowkit-confirmation {
+    @apply text-center p-6;
+  }
+  
+  .flowkit-confirmation-icon {
+    @apply w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl;
+  }
+  
+  .flowkit-confirmation-icon-success {
+    @apply bg-green-100 text-green-600;
+  }
+  
+  .flowkit-confirmation-icon-error {
+    @apply bg-red-100 text-red-600;
+  }
+  
+  .flowkit-confirmation-title {
+    @apply text-lg font-semibold text-flowkit-text mb-2;
+  }
+  
+  .flowkit-confirmation-message {
+    @apply text-flowkit-text-secondary mb-4;
+  }
+  
+  /* FAQ Widget */
+  .flowkit-faq-item {
+    @apply bg-white rounded-lg border border-flowkit-border overflow-hidden;
+  }
+  
+  .flowkit-faq-question {
+    @apply flex items-center justify-between p-4 cursor-pointer hover:bg-flowkit-surface transition-colors;
+  }
+  
+  .flowkit-faq-answer {
+    @apply px-4 pb-4 text-flowkit-text-secondary text-sm;
+  }
+  
+  /* Progress Widget */
+  .flowkit-progress {
+    @apply w-full bg-flowkit-surface rounded-full h-2 overflow-hidden;
+  }
+  
+  .flowkit-progress-bar {
+    @apply h-full bg-flowkit-primary rounded-full transition-all duration-300 ease-out;
+  }
+  
+  /* Spinner Widget */
+  .flowkit-spinner {
+    @apply w-6 h-6 border-2 border-flowkit-border border-t-flowkit-primary rounded-full animate-spin;
+  }
+  
+  /* Timeline Widget */
+  .flowkit-timeline {
+    @apply relative pl-8;
+  }
+  
+  .flowkit-timeline::before {
+    content: '';
+    @apply absolute left-[11px] top-2 bottom-2 w-0.5 bg-flowkit-border;
+  }
+  
+  .flowkit-timeline-item {
+    @apply relative pb-6 last:pb-0;
+  }
+  
+  .flowkit-timeline-dot {
+    @apply absolute left-[-21px] w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-medium;
+  }
+  
+  .flowkit-timeline-dot-completed {
+    @apply bg-flowkit-primary border-flowkit-primary text-white;
+  }
+  
+  .flowkit-timeline-dot-current {
+    @apply bg-white border-flowkit-primary text-flowkit-primary;
+  }
+  
+  .flowkit-timeline-dot-pending {
+    @apply bg-white border-flowkit-border text-flowkit-text-secondary;
+  }
+  
+  /* Stats Widget */
+  .flowkit-stats {
+    @apply bg-white rounded-xl border border-flowkit-border p-4 shadow-widget;
+  }
+  
+  .flowkit-stats-title {
+    @apply text-sm text-flowkit-text-secondary mb-1;
+  }
+  
+  .flowkit-stats-value {
+    @apply text-2xl font-bold text-flowkit-text;
+  }
+  
+  .flowkit-stats-change {
+    @apply text-sm font-medium mt-1;
+  }
+  
+  .flowkit-stats-change-positive {
+    @apply text-green-600;
+  }
+  
+  .flowkit-stats-change-negative {
+    @apply text-red-600;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  .flowkit-dark-auto {
+    @apply bg-gray-900 text-white;
+  }
+  
+  .flowkit-dark-auto .flowkit-widget {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .flowkit-dark-auto .flowkit-bubble-assistant {
+    @apply bg-gray-800 text-gray-100;
+  }
+}
