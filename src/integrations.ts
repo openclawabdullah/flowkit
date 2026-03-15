@@ -121,3 +121,13 @@ export {
   PYTHON_LANGCHAIN_EXAMPLE,
   type LangChainConfig,
 } from './langchain'
+
+// MCP Integration
+export {
+  mcpWidgetResponse,
+  mcpErrorResponse,
+  mcpSuccessResponse,
+  MCP_TOOL_SCHEMAS,
+  MCP_SERVER_TEMPLATE,
+  FASTMCP_SERVER_TEMPLATE,
+} from './mcp'
