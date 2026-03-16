@@ -4,26 +4,49 @@
  * Browse all available Lucide icons
  */
 
-import React, { useState } from 'react'
-import * as Icons from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import * as AllIcons from 'lucide-react'
 
 export function IconsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
   
-  // Filter only actual icon components (they start with uppercase and are functions)
-  const iconNames = Object.keys(Icons).filter(key => {
-    // Skip non-icon exports
-    if (['default', 'icons', 'createLucideIcon', 'LucideIcon', 'LucideProps'].includes(key)) return false
-    // Icons start with uppercase letter
-    if (!/^[A-Z]/.test(key)) return false
-    // Must be a function (component)
-    return typeof (Icons as any)[key] === 'function'
-  })
+  // Get only actual icon components - filter out utilities and types
+  const iconNames = useMemo(() => {
+    const excludeList = new Set([
+      'default',
+      'createLucideIcon', 
+      'LucideIcon',
+      'LucideProps',
+      'Icon',
+      'icons'
+    ])
+    
+    return Object.keys(AllIcons)
+      .filter(key => {
+        // Skip excluded names
+        if (excludeList.has(key)) return false
+        
+        // Icons start with uppercase letter
+        if (!/^[A-Z]/.test(key)) return false
+        
+        // Must be a function
+        const val = (AllIcons as any)[key]
+        if (typeof val !== 'function') return false
+        
+        // Skip if it has $$typeof (React element, not component)
+        if (val.$$typeof) return false
+        
+        return true
+      })
+      .sort()
+  }, [])
   
-  const filteredIcons = iconNames.filter(name => {
-    return name.toLowerCase().includes(searchQuery.toLowerCase())
-  })
+  const filteredIcons = useMemo(() => {
+    if (!searchQuery) return iconNames
+    const query = searchQuery.toLowerCase()
+    return iconNames.filter(name => name.toLowerCase().includes(query))
+  }, [iconNames, searchQuery])
   
   const copyToClipboard = (iconName: string) => {
     const usageCode = `import { ${iconName} } from 'lucide-react'\n\n<${iconName} size={24} />`
@@ -54,13 +77,15 @@ export function IconsPage() {
       
       <div className="icons-grid">
         {filteredIcons.map(iconName => {
-          const IconComponent = (Icons as any)[iconName]
+          const IconComponent = (AllIcons as any)[iconName]
+          if (!IconComponent) return null
           
           return (
             <div 
               key={iconName}
               className="icon-card"
               onClick={() => copyToClipboard(iconName)}
+              title={iconName}
             >
               <div className="icon-preview">
                 <IconComponent size={24} />
@@ -73,6 +98,12 @@ export function IconsPage() {
           )
         })}
       </div>
+      
+      {filteredIcons.length === 0 && (
+        <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>
+          No icons found matching "{searchQuery}"
+        </div>
+      )}
       
       <div className="usage-example" style={{ marginTop: 32 }}>
         <h3>How to use icons</h3>
