@@ -37,6 +37,16 @@ export function IconsPage() {
     
     // Must be a function (component)
     const val = (AllIcons as any)[key]
+    
+    // Debug first few
+    if (iconNames.length < 3) {
+      console.log(`Checking ${key}:`, {
+        type: typeof val,
+        isFunction: typeof val === 'function',
+        val: val
+      })
+    }
+    
     if (typeof val !== 'function') continue
     
     iconNames.push(key)
