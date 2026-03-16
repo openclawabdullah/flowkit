@@ -265,10 +265,6 @@ export function StudioPage() {
           />
           
           {error && <div className="studio-error">{error}</div>}
-          
-          <div className="studio-code-hint">
-            <p>Edit the JSON and click Preview to see your widget</p>
-          </div>
         </div>
         
         {/* Right Panel - Preview */}
@@ -297,9 +293,7 @@ export function StudioPage() {
 
 // Widget Preview Component - Renders ALL widget types
 function WidgetPreview({ widget }: { widget: any }) {
-  if (!widget || !widget.type) {
-    return <div style={{ padding: 20, color: '#ef4444' }}>Invalid widget - missing "type" field</div>
-  }
+  if (!widget || !widget.type) return <div style={{ padding: 20, color: '#ef4444' }}>Invalid widget</div>
   
   const type = widget.type
   
@@ -330,7 +324,7 @@ function WidgetPreview({ widget }: { widget: any }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, maxWidth: 320 }}>
         {products.slice(0, 4).map((p: any, i: number) => (
           <div key={i} style={{ background: 'white', borderRadius: 8, overflow: 'hidden', border: '1px solid #e5e5e5' }}>
-            {p.image && <div style={{ height: 80, background: 'linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)' }}></div>}
+            {p.image && <img src={p.image} alt={p.title} style={{ width: '100%', height: 80, objectFit: 'cover' }} />}
             <div style={{ padding: 8 }}>
               <div style={{ fontSize: 11, fontWeight: 600, marginBottom: 4 }}>{p.title}</div>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#10a37f' }}>${p.price}</div>
@@ -360,10 +354,10 @@ function WidgetPreview({ widget }: { widget: any }) {
       <div style={{ maxWidth: 280, background: 'white', padding: 24, borderRadius: 12, border: '1px solid #e5e5e5' }}>
         <h2 style={{ margin: '0 0 4px 0', textAlign: 'center', fontSize: 20 }}>{widget.title || 'Create Account'}</h2>
         <p style={{ margin: '0 0 20px 0', textAlign: 'center', color: '#6b7280', fontSize: 14 }}>{widget.subtitle || 'Get started'}</p>
-        <input type="text" placeholder="Full Name" style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #e5e5e5', borderRadius: 8, fontSize: 14 }} />
-        <input type="email" placeholder="Email" style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #e5e5e5', borderRadius: 8, fontSize: 14 }} />
-        <input type="password" placeholder="Password" style={{ width: '100%', padding: 10, marginBottom: 16, border: '1px solid #e5e5e5', borderRadius: 8, fontSize: 14 }} />
-        <button style={{ width: '100%', padding: 10, background: '#10a37f', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>{widget.submitButtonText || 'Create Account'}</button>
+        <input type="text" placeholder="Full Name" style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #e5e5e5', borderRadius: 6, fontSize: 13 }} />
+        <input type="email" placeholder="Email" style={{ width: '100%', padding: 10, marginBottom: 10, border: '1px solid #e5e5e5', borderRadius: 6, fontSize: 13 }} />
+        <input type="password" placeholder="Password" style={{ width: '100%', padding: 10, marginBottom: 16, border: '1px solid #e5e5e5', borderRadius: 6, fontSize: 13 }} />
+        <button style={{ width: '100%', padding: 10, background: '#10a37f', color: 'white', border: 'none', borderRadius: 6, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>{widget.submitButtonText || 'Create Account'}</button>
       </div>
     )
   }
@@ -392,10 +386,10 @@ function WidgetPreview({ widget }: { widget: any }) {
     return (
       <div style={{ maxWidth: 240, background: 'white', padding: 16, borderRadius: 12, border: '1px solid #e5e5e5' }}>
         <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 12 }}>{widget.label || 'Color'}</div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 8 }}>
           {colors.map((c: any, i: number) => (
             <div key={i} style={{ textAlign: 'center' }}>
-              <div style={{ width: 32, height: 32, background: c.hex || '#ccc', borderRadius: '50%', border: i === 0 ? '3px solid #10a37f' : '2px solid #e5e5e5', marginBottom: 4 }}></div>
+              <div style={{ width: 32, height: 32, background: c.hex, borderRadius: '50%', border: i === 0 ? '3px solid #10a37f' : '2px solid #e5e5e5', marginBottom: 4 }}></div>
               <div style={{ fontSize: 9, color: '#6b7280' }}>{c.name}</div>
             </div>
           ))}
@@ -410,7 +404,7 @@ function WidgetPreview({ widget }: { widget: any }) {
     return (
       <div style={{ maxWidth: 280, background: 'white', padding: 16, borderRadius: 12, border: '1px solid #e5e5e5' }}>
         <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 12 }}>{widget.label || 'Size'}</div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 8 }}>
           {sizes.map((s: any, i: number) => (
             <button key={i} style={{ padding: '8px 14px', border: i === 2 ? '2px solid #10a37f' : '1px solid #e5e5e5', background: i === 2 ? '#ecfdf5' : 'white', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
               {s.label || s.value}
@@ -451,7 +445,7 @@ function WidgetPreview({ widget }: { widget: any }) {
   if (type === 'Confirmation') {
     return (
       <div style={{ maxWidth: 280, background: 'white', padding: 32, borderRadius: 12, border: '1px solid #e5e5e5', textAlign: 'center' }}>
-        <div style={{ width: 56, height: 56, margin: '0 auto 16px', borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#10a37f' }}>✓</div>
+        <div style={{ width: 56, height: 56, margin: '0 auto 16px', borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>✓</div>
         <h3 style={{ margin: '0 0 8px 0', fontSize: 18 }}>{widget.title || 'Success!'}</h3>
         <p style={{ margin: 0, fontSize: 14, color: '#6b7280' }}>{widget.message || 'Your changes have been saved.'}</p>
       </div>
@@ -501,11 +495,11 @@ function WidgetPreview({ widget }: { widget: any }) {
   
   // Timeline
   if (type === 'Timeline') {
-    const timelineItems = widget.items || []
+    const items = widget.items || []
     return (
       <div style={{ maxWidth: 240, background: 'white', padding: 16, borderRadius: 12, border: '1px solid #e5e5e5' }}>
-        {timelineItems.map((item: any, i: number) => (
-          <div key={i} style={{ display: 'flex', gap: 12, marginBottom: i < timelineItems.length - 1 ? 16 : 0 }}>
+        {items.map((item: any, i: number) => (
+          <div key={i} style={{ display: 'flex', gap: 12, marginBottom: i < items.length - 1 ? 16 : 0 }}>
             <div style={{ width: 12, height: 12, borderRadius: '50%', background: item.status === 'completed' ? '#10a37f' : '#e5e7eb', marginTop: 4 }}></div>
             <div>
               <div style={{ fontWeight: 600, fontSize: 12 }}>{item.title}</div>
