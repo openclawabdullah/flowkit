@@ -16,6 +16,8 @@ type ForwardRefComponent = {
 export function IconsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const iconsPerPage = 200
   
   // Known non-icon exports to exclude
   const excludeList = [
@@ -54,6 +56,17 @@ export function IconsPage() {
     ? iconNames.filter(name => name.toLowerCase().includes(searchQuery.toLowerCase()))
     : iconNames
   
+  // Pagination
+  const totalPages = Math.ceil(filteredIcons.length / iconsPerPage)
+  const startIndex = (currentPage - 1) * iconsPerPage
+  const endIndex = startIndex + iconsPerPage
+  const paginatedIcons = filteredIcons.slice(startIndex, endIndex)
+  
+  // Reset to page 1 when search changes
+  React.useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery])
+  
   const copyToClipboard = (iconName: string) => {
     const usageCode = `import { ${iconName} } from 'lucide-react'\n\n<${iconName} size={24} />`
     navigator.clipboard.writeText(usageCode)
@@ -82,7 +95,7 @@ export function IconsPage() {
       </div>
       
       <div className="icons-grid">
-        {filteredIcons.slice(0, 200).map(iconName => {
+        {paginatedIcons.map(iconName => {
           const IconComponent = (AllIcons as any)[iconName]
           if (!IconComponent) return null
           
@@ -105,9 +118,56 @@ export function IconsPage() {
         })}
       </div>
       
-      {filteredIcons.length > 200 && (
-        <div style={{ textAlign: 'center', padding: 20, color: '#6b7280', fontSize: 14 }}>
-          Showing first 200 of {filteredIcons.length} icons. Use search to find specific icons.
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button 
+            className="pagination-btn"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            ← Previous
+          </button>
+          
+          <div className="pagination-info">
+            Page {currentPage} of {totalPages}
+            <span className="pagination-total">
+              ({filteredIcons.length} icons)
+            </span>
+          </div>
+          
+          <div className="pagination-pages">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum
+              if (totalPages <= 5) {
+                pageNum = i + 1
+              } else if (currentPage <= 3) {
+                pageNum = i + 1
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i
+              } else {
+                pageNum = currentPage - 2 + i
+              }
+              
+              return (
+                <button
+                  key={pageNum}
+                  className={`pagination-page ${currentPage === pageNum ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              )
+            })}
+          </div>
+          
+          <button 
+            className="pagination-btn"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next →
+          </button>
         </div>
       )}
       
