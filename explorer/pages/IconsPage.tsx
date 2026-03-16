@@ -85,10 +85,10 @@ export function IconsPage() {
               key={iconName}
               className="icon-card"
               onClick={() => copyToClipboard(iconName)}
-              title={iconName}
+              title={`${iconName} - Click to copy`}
             >
               <div className="icon-preview">
-                <IconComponent size={24} />
+                <IconComponent size={20} />
               </div>
               <div className="icon-name">{iconName}</div>
               {copiedIcon === iconName && (
