@@ -24,6 +24,10 @@ export function IconsPage() {
   // Get all icon names - simple approach
   const iconNames: string[] = []
   
+  // Debug: log all keys
+  console.log('Total keys from lucide-react:', Object.keys(AllIcons).length)
+  console.log('First 10 keys:', Object.keys(AllIcons).slice(0, 10))
+  
   for (const key of Object.keys(AllIcons)) {
     // Skip excluded names
     if (excludeList.includes(key)) continue
@@ -37,6 +41,9 @@ export function IconsPage() {
     
     iconNames.push(key)
   }
+  
+  console.log('Filtered icon names:', iconNames.length)
+  console.log('First 10 icons:', iconNames.slice(0, 10))
   
   // Sort alphabetically
   iconNames.sort()
