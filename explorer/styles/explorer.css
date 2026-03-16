@@ -810,20 +810,65 @@ html, body, #root {
 .studio-widget-item:hover .studio-widget-actions {
   opacity: 1;
 }
-.studio-widget-actions button {
-  padding: 4px 6px;
+.studio-widget-menu {
+  position: relative;
+}
+.studio-menu-trigger {
+  width: 28px;
+  height: 28px;
+  padding: 0;
   background: transparent;
   border: none;
-  font-size: 14px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  opacity: 0;
+}
+.studio-widget-item:hover .studio-menu-trigger {
+  opacity: 1;
+}
+.studio-menu-trigger:hover {
+  background: #e5e7eb;
+  color: #202123;
+}
+.studio-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  min-width: 120px;
+  padding: 4px;
+}
+.studio-menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  font-size: 13px;
   cursor: pointer;
   border-radius: 4px;
   transition: background 0.15s;
 }
-.studio-widget-actions button:hover {
-  background: #e5e7eb;
+.studio-menu-dropdown button:hover {
+  background: #f3f4f6;
 }
-.studio-widget-actions button.delete:hover {
-  background: #fee2e2;
+.studio-menu-dropdown button.delete {
+  color: #dc2626;
+}
+.studio-menu-dropdown button.delete:hover {
+  background: #fef2f2;
 }
 .studio-rename-input {
   width: 100%;

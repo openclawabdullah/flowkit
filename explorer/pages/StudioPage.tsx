@@ -27,6 +27,7 @@ export function StudioPage() {
   const [editingName, setEditingName] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | ''>('')
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   
   // Check if we got a widget from Gallery
   useEffect(() => {
@@ -105,6 +106,15 @@ export function StudioPage() {
     
     return () => clearTimeout(timer)
   }, [code, selectedWidgetId])
+  
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null)
+    if (openMenuId) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [openMenuId])
   
   const parseCode = () => {
     setError(null)
@@ -283,10 +293,32 @@ export function StudioPage() {
                       <div className="studio-widget-name" onClick={() => loadWidget(widget)}>
                         {widget.name}
                       </div>
-                      <div className="studio-widget-actions">
-                        <button onClick={(e) => { e.stopPropagation(); startRename(widget) }} title="Rename">✏️</button>
-                        <button onClick={(e) => { e.stopPropagation(); downloadWidget(widget) }} title="Download">⬇️</button>
-                        <button onClick={(e) => { e.stopPropagation(); deleteWidget(widget.id) }} title="Delete" className="delete">🗑️</button>
+                      <div className="studio-widget-menu">
+                        <button 
+                          className="studio-menu-trigger"
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            setOpenMenuId(openMenuId === widget.id ? null : widget.id);
+                          }}
+                        >
+                          ⋮
+                        </button>
+                        {openMenuId === widget.id && (
+                          <div className="studio-menu-dropdown">
+                            <button onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); startRename(widget); }}>
+                              Rename
+                            </button>
+                            <button onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); downloadWidget(widget); }}>
+                              Download
+                            </button>
+                            <button 
+                              className="delete"
+                              onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); deleteWidget(widget.id); }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </>
                   )}
