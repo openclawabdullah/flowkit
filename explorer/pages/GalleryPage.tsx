@@ -976,22 +976,73 @@ function ProductCardPreview() {
 
 function ProductGridPreview() {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-      <div style={{ height: 40, background: '#f3f4f6', borderRadius: 4 }}></div>
-      <div style={{ height: 40, background: '#f3f4f6', borderRadius: 4 }}></div>
-      <div style={{ height: 40, background: '#f3f4f6', borderRadius: 4 }}></div>
-      <div style={{ height: 40, background: '#f3f4f6', borderRadius: 4 }}></div>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, maxWidth: 240 }}>
+      <div style={{ background: 'white', borderRadius: 6, overflow: 'hidden', border: '1px solid #e5e5e5' }}>
+        <div style={{ height: 50, background: 'linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)' }}></div>
+        <div style={{ padding: 8 }}>
+          <div style={{ fontSize: 10, fontWeight: 600 }}>Product 1</div>
+          <div style={{ fontSize: 9, color: '#10a37f', fontWeight: 600 }}>$99</div>
+        </div>
+      </div>
+      <div style={{ background: 'white', borderRadius: 6, overflow: 'hidden', border: '1px solid #e5e5e5' }}>
+        <div style={{ height: 50, background: 'linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)' }}></div>
+        <div style={{ padding: 8 }}>
+          <div style={{ fontSize: 10, fontWeight: 600 }}>Product 2</div>
+          <div style={{ fontSize: 9, color: '#10a37f', fontWeight: 600 }}>$149</div>
+        </div>
+      </div>
+      <div style={{ background: 'white', borderRadius: 6, overflow: 'hidden', border: '1px solid #e5e5e5' }}>
+        <div style={{ height: 50, background: 'linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)' }}></div>
+        <div style={{ padding: 8 }}>
+          <div style={{ fontSize: 10, fontWeight: 600 }}>Product 3</div>
+          <div style={{ fontSize: 9, color: '#10a37f', fontWeight: 600 }}>$79</div>
+        </div>
+      </div>
+      <div style={{ background: 'white', borderRadius: 6, overflow: 'hidden', border: '1px solid #e5e5e5' }}>
+        <div style={{ height: 50, background: 'linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%)' }}></div>
+        <div style={{ padding: 8 }}>
+          <div style={{ fontSize: 10, fontWeight: 600 }}>Product 4</div>
+          <div style={{ fontSize: 9, color: '#10a37f', fontWeight: 600 }}>$199</div>
+        </div>
+      </div>
     </div>
   )
 }
 
 function OrderSummaryPreview() {
   return (
-    <div style={{ background: '#f7f7f8', borderRadius: 8, padding: 12 }}>
-      <div style={{ fontWeight: 600, marginBottom: 8 }}>Cart (2 items)</div>
-      <div style={{ fontSize: 12, color: '#6b7280' }}>Item 1 - $99</div>
-      <div style={{ fontSize: 12, color: '#6b7280' }}>Item 2 - $49</div>
-      <div style={{ marginTop: 8, fontWeight: 600 }}>Total: $148</div>
+    <div style={{ background: 'white', borderRadius: 8, border: '1px solid #e5e5e5', overflow: 'hidden', minWidth: 200 }}>
+      <div style={{ padding: '10px 12px', borderBottom: '1px solid #e5e5e5', fontWeight: 600, fontSize: 12 }}>
+        🛒 Cart (2 items)
+      </div>
+      <div style={{ padding: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #f3f4f6' }}>
+          <div style={{ width: 32, height: 32, background: '#f3f4f6', borderRadius: 4 }}></div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 10, fontWeight: 500 }}>Headphones</div>
+            <div style={{ fontSize: 9, color: '#6b7280' }}>Qty: 1</div>
+          </div>
+          <div style={{ fontSize: 10, fontWeight: 600 }}>$299</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0' }}>
+          <div style={{ width: 32, height: 32, background: '#f3f4f6', borderRadius: 4 }}></div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 10, fontWeight: 500 }}>Charger</div>
+            <div style={{ fontSize: 9, color: '#6b7280' }}>Qty: 2</div>
+          </div>
+          <div style={{ fontSize: 10, fontWeight: 600 }}>$100</div>
+        </div>
+      </div>
+      <div style={{ padding: '8px 12px', background: '#f7f7f8', borderTop: '1px solid #e5e5e5' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
+          <span>Subtotal:</span>
+          <span>$399</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, fontWeight: 600, marginTop: 4 }}>
+          <span>Total:</span>
+          <span style={{ color: '#10a37f' }}>$391.97</span>
+        </div>
+      </div>
     </div>
   )
 }
