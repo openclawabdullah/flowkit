@@ -18,7 +18,8 @@ import {
   Puzzle, 
   Wrench, 
   BookOpen, 
-  Github 
+  Github,
+  Hammer
 } from 'lucide-react'
 
 // Pages
@@ -28,6 +29,7 @@ import { ComponentsPage } from './pages/ComponentsPage'
 import { StudioPage } from './pages/StudioPage'
 import { DocsPage } from './pages/DocsPage'
 import { HomePage } from './pages/HomePage'
+import { WidgetBuilderPage } from './pages/WidgetBuilderPage'
 
 // Styles
 import './styles/explorer.css'
@@ -45,6 +47,7 @@ export function FlowKitExplorer() {
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/icons" element={<IconsPage />} />
             <Route path="/components" element={<ComponentsPage />} />
+            <Route path="/builder" element={<WidgetBuilderPage />} />
             <Route path="/studio" element={<StudioPage />} />
             <Route path="/docs/*" element={<DocsPage />} />
           </Routes>
@@ -61,6 +64,7 @@ function Sidebar() {
     { path: '/gallery', icon: 'Grid3x3', label: 'Gallery' },
     { path: '/icons', icon: 'Smile', label: 'Icons' },
     { path: '/components', icon: 'Puzzle', label: 'Components' },
+    { path: '/builder', icon: 'Hammer', label: 'Builder' },
     { path: '/studio', icon: 'Wrench', label: 'Studio' },
     { path: '/docs', icon: 'BookOpen', label: 'Documentation' },
   ]
@@ -74,6 +78,7 @@ function Sidebar() {
       'Puzzle': Puzzle,
       'Wrench': Wrench,
       'BookOpen': BookOpen,
+      'Hammer': Hammer,
     }
     const Icon = icons[name]
     return Icon ? <Icon size={20} /> : null
