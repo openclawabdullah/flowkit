@@ -3,6 +3,7 @@
  * 
  * Interactive website for exploring FlowKit:
  * - Gallery: Browse all widgets
+ * - Icons: Browse all icons
  * - Components: Learn components with examples
  * - Studio: Build and save custom widgets
  * - Docs: Comprehensive documentation
@@ -10,9 +11,19 @@
 
 import React from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { 
+  Home, 
+  Grid3x3, 
+  Smile, 
+  Puzzle, 
+  Wrench, 
+  BookOpen, 
+  GitHub 
+} from 'lucide-react'
 
 // Pages
 import { GalleryPage } from './pages/GalleryPage'
+import { IconsPage } from './pages/IconsPage'
 import { ComponentsPage } from './pages/ComponentsPage'
 import { StudioPage } from './pages/StudioPage'
 import { DocsPage } from './pages/DocsPage'
@@ -32,6 +43,7 @@ export function FlowKitExplorer() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/icons" element={<IconsPage />} />
             <Route path="/components" element={<ComponentsPage />} />
             <Route path="/studio" element={<StudioPage />} />
             <Route path="/docs/*" element={<DocsPage />} />
@@ -45,12 +57,27 @@ function Sidebar() {
   const location = useLocation()
   
   const navItems = [
-    { path: '/', icon: '🏠', label: 'Home' },
-    { path: '/gallery', icon: '🎨', label: 'Gallery' },
-    { path: '/components', icon: '🧩', label: 'Components' },
-    { path: '/studio', icon: '🔧', label: 'Widget Studio' },
-    { path: '/docs', icon: '📚', label: 'Documentation' },
+    { path: '/', icon: 'Home', label: 'Home' },
+    { path: '/gallery', icon: 'Grid3x3', label: 'Gallery' },
+    { path: '/icons', icon: 'Smile', label: 'Icons' },
+    { path: '/components', icon: 'Puzzle', label: 'Components' },
+    { path: '/studio', icon: 'Wrench', label: 'Widget Studio' },
+    { path: '/docs', icon: 'BookOpen', label: 'Documentation' },
   ]
+  
+  // Icon component mapper
+  const getIcon = (name: string) => {
+    const icons: Record<string, any> = {
+      'Home': Home,
+      'Grid3x3': Grid3x3,
+      'Smile': Smile,
+      'Puzzle': Puzzle,
+      'Wrench': Wrench,
+      'BookOpen': BookOpen,
+    }
+    const Icon = icons[name]
+    return Icon ? <Icon size={20} /> : null
+  }
   
   return (
     <aside className="explorer-sidebar">
@@ -69,7 +96,7 @@ function Sidebar() {
             to={item.path}
             className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
           >
-            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-icon">{getIcon(item.icon)}</span>
             <span className="nav-label">{item.label}</span>
           </Link>
         ))}
@@ -82,7 +109,8 @@ function Sidebar() {
           rel="noopener noreferrer"
           className="github-link"
         >
-          <span>📦</span> GitHub
+          <GitHub size={16} />
+          <span>GitHub</span>
         </a>
       </div>
     </aside>

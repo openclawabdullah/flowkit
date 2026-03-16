@@ -903,6 +903,73 @@ html, body, #root {
   color: #6b7280;
 }
 
+/* Icons Page */
+.icons-page {}
+.icons-controls {
+  margin-bottom: 24px;
+}
+.icons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+.icon-card {
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.icon-card:hover {
+  border-color: #10a37f;
+  background: #f7f7f8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.icon-preview {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+}
+.icon-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+  word-break: break-word;
+}
+.icon-copied {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #10a37f;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.usage-example {
+  margin-top: 32px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+}
+.usage-example h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+}
+
 /* Home Page */
 .home-page {}
 .hero {
