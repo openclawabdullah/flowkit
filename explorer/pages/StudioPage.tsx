@@ -5,7 +5,6 @@
  */
 
 import React, { useState, useRef } from 'react'
-import { WidgetRenderer } from 'flowkit'
 
 interface SavedWidget {
   id: string
@@ -13,6 +12,72 @@ interface SavedWidget {
   code: string
   createdAt: number
   updatedAt: number
+}
+
+// Simple Widget Preview Component (without importing flowkit)
+function WidgetPreview({ widget }: { widget: any }) {
+  if (!widget || !widget.type) {
+    return <div style={{ color: '#9ca3af', padding: 20 }}>Invalid widget</div>
+  }
+  
+  // Basic preview based on type
+  const type = widget.type
+  
+  if (type === 'ProductCard') {
+    return (
+      <div style={{ maxWidth: 320, background: 'white', borderRadius: 12, overflow: 'hidden', border: '1px solid #e5e5e5', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        {widget.image && (
+          <img src={widget.image} alt={widget.title} style={{ width: '100%', height: 200, objectFit: 'cover' }} />
+        )}
+        <div style={{ padding: 16 }}>
+          {widget.badge && (
+            <span style={{ display: 'inline-block', padding: '4px 8px', background: widget.badgeColor || '#10a37f', color: 'white', fontSize: 11, fontWeight: 600, borderRadius: 4, marginBottom: 8 }}>
+              {widget.badge}
+            </span>
+          )}
+          <h3 style={{ margin: '0 0 4px 0', fontSize: 18 }}>{widget.title}</h3>
+          {widget.subtitle && <p style={{ margin: '0 0 8px 0', fontSize: 13, color: '#6b7280' }}>{widget.subtitle}</p>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            {widget.originalPrice && (
+              <span style={{ textDecoration: 'line-through', color: '#9ca3af' }}>${widget.originalPrice}</span>
+            )}
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#10a37f' }}>${widget.price}</span>
+          </div>
+          {widget.rating && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 12 }}>
+              <span style={{ color: '#fbbf24' }}>★</span>
+              <span style={{ fontWeight: 600 }}>{widget.rating}</span>
+              <span style={{ color: '#9ca3af', fontSize: 13 }}>({widget.reviews || 0} reviews)</span>
+            </div>
+          )}
+          <button style={{ width: '100%', padding: '12px', background: '#10a37f', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    )
+  }
+  
+  if (type === 'Login') {
+    return (
+      <div style={{ maxWidth: 320, background: 'white', padding: 24, borderRadius: 12, border: '1px solid #e5e5e5' }}>
+        <h2 style={{ margin: '0 0 8px 0', textAlign: 'center' }}>Sign In</h2>
+        <p style={{ margin: '0 0 20px 0', textAlign: 'center', color: '#6b7280' }}>Welcome back</p>
+        <input type="email" placeholder="Email" style={{ width: '100%', padding: 12, marginBottom: 12, border: '1px solid #e5e5e5', borderRadius: 8 }} />
+        <input type="password" placeholder="Password" style={{ width: '100%', padding: 12, marginBottom: 16, border: '1px solid #e5e5e5', borderRadius: 8 }} />
+        <button style={{ width: '100%', padding: 12, background: '#10a37f', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+          Sign In
+        </button>
+      </div>
+    )
+  }
+  
+  // Default: show JSON
+  return (
+    <div style={{ background: '#1e1e1e', color: '#d4d4d4', padding: 16, borderRadius: 8, fontFamily: 'monospace', fontSize: 13, maxHeight: 400, overflow: 'auto' }}>
+      <pre style={{ margin: 0 }}>{JSON.stringify(widget, null, 2)}</pre>
+    </div>
+  )
 }
 
 export function StudioPage() {
@@ -267,10 +332,7 @@ export function StudioPage() {
                 <div className="preview-content">
                   {/* Widget Preview */}
                   <div className="widget-preview-box">
-                    <WidgetRenderer 
-                      widget={previewWidget}
-                      onAction={(action) => console.log('Action:', action)}
-                    />
+                    <WidgetPreview widget={previewWidget} />
                   </div>
                 </div>
               ) : (
