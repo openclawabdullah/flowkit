@@ -56,6 +56,31 @@ export function StudioPage() {
     }
   }, [location.state])
   
+  // Auto-parse code on every change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!code.trim()) {
+        setPreviewWidget(null)
+        setError(null)
+        return
+      }
+      
+      try {
+        const parsed = JSON.parse(code)
+        setPreviewWidget(parsed)
+        setError(null)
+      } catch (e: any) {
+        // Don't show error while typing, only show for invalid JSON
+        if (code.includes(':') || code.includes('{')) {
+          setError(null) // Silently fail while typing
+          setPreviewWidget(null)
+        }
+      }
+    }, 300) // Debounce 300ms
+    
+    return () => clearTimeout(timer)
+  }, [code])
+  
   const parseCode = () => {
     setError(null)
     if (!code.trim()) {
@@ -251,7 +276,7 @@ export function StudioPage() {
           <div className="studio-panel-header">
             <h3>JSON Editor</h3>
             <div className="studio-panel-actions">
-              <button className="btn-secondary btn-sm" onClick={parseCode}>▶ Preview</button>
+              {error && <span className="studio-error-badge">⚠️ Invalid JSON</span>}
               <button className="btn-primary btn-sm" onClick={saveWidget}>💾 Save</button>
             </div>
           </div>
@@ -271,7 +296,10 @@ export function StudioPage() {
         <div className="studio-preview">
           <div className="studio-panel-header">
             <h3>Preview</h3>
-            {previewWidget && <span className="studio-widget-type">{previewWidget.type}</span>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {previewWidget && <span className="studio-success-badge">✓ Valid</span>}
+              {previewWidget && <span className="studio-widget-type">{previewWidget.type}</span>}
+            </div>
           </div>
           
           <div className="studio-preview-content">
@@ -280,8 +308,8 @@ export function StudioPage() {
             ) : (
               <div className="studio-preview-empty">
                 <div className="studio-preview-icon">🎨</div>
-                <p>No preview yet</p>
-                <p className="hint">Edit JSON and click Preview</p>
+                <p>Start typing to see preview</p>
+                <p className="hint">Changes appear automatically</p>
               </div>
             )}
           </div>
