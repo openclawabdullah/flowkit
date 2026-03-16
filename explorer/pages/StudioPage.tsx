@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useRef } from 'react'
+import { WidgetRenderer } from 'flowkit'
 
 interface SavedWidget {
   id: string
@@ -101,12 +102,15 @@ export function StudioPage() {
   
   // Download widget
   const downloadWidget = (widget: SavedWidget) => {
+    console.log('Downloading widget:', widget)
     const blob = new Blob([widget.code], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
     a.download = `${widget.name}.widget`
+    document.body.appendChild(a)
     a.click()
+    document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }
   
@@ -215,6 +219,12 @@ export function StudioPage() {
             <div className="panel-header">
               <h3>Code Editor</h3>
               <div className="editor-actions">
+                <button className="btn-secondary" onClick={() => {
+                  setCode(DEFAULT_WIDGET)
+                  setSelectedWidget(null)
+                }} title="Load a complete example widget">
+                  📋 Load Example
+                </button>
                 <button className="btn-secondary" onClick={parseWidget}>
                   ▶️ Preview
                 </button>
@@ -245,6 +255,11 @@ export function StudioPage() {
           <div className="preview-panel">
             <div className="panel-header">
               <h3>Preview</h3>
+              {previewWidget && (
+                <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                  {previewWidget.type || 'Widget'}
+                </span>
+              )}
             </div>
             
             <div className="preview-area">
@@ -252,7 +267,10 @@ export function StudioPage() {
                 <div className="preview-content">
                   {/* Widget Preview */}
                   <div className="widget-preview-box">
-                    <pre>{JSON.stringify(previewWidget, null, 2)}</pre>
+                    <WidgetRenderer 
+                      widget={previewWidget}
+                      onAction={(action) => console.log('Action:', action)}
+                    />
                   </div>
                 </div>
               ) : (
@@ -284,22 +302,47 @@ function saveToStorage(widgets: SavedWidget[]) {
   localStorage.setItem('flowkit-studio-widgets', JSON.stringify(widgets))
 }
 
-// Default widget template
+// Default widget template - FULL example with all properties
 const DEFAULT_WIDGET = `{
   "type": "ProductCard",
-  "productId": "1",
-  "title": "Premium Headphones",
-  "subtitle": "Wireless Noise Cancelling",
+  "productId": "prod_001",
+  "title": "Premium Wireless Headphones",
+  "subtitle": "Active Noise Cancellation • 40hr Battery",
   "price": 299.99,
   "originalPrice": 399.99,
-  "image": "https://via.placeholder.com/400x300",
+  "currency": "USD",
+  "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+  "images": [
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+    "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400"
+  ],
   "rating": 4.8,
   "reviews": 1247,
   "badge": "SALE",
+  "badgeColor": "#ef4444",
   "inStock": true,
+  "stockCount": 23,
+  "brand": "AudioPro",
+  "category": "Electronics",
+  "tags": ["wireless", "bluetooth", "noise-cancelling"],
+  "features": [
+    "40-hour battery life",
+    "Active noise cancellation",
+    "Premium sound quality",
+    "Comfortable fit"
+  ],
+  "colors": [
+    { "name": "Black", "hex": "#1a1a1a" },
+    { "name": "White", "hex": "#ffffff" },
+    { "name": "Navy", "hex": "#1e3a5f" }
+  ],
   "onAddToCartAction": {
     "type": "add_to_cart",
-    "data": { "productId": "1" }
+    "data": { "productId": "prod_001", "quantity": 1 }
+  },
+  "onViewDetailsAction": {
+    "type": "view_product",
+    "data": { "productId": "prod_001" }
   }
 }`
 
