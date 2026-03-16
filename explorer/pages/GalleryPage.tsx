@@ -57,7 +57,10 @@ export function GalleryPage() {
             <button
               key={cat.id}
               className={`category-tab ${selectedCategory === cat.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat.id)}
+              onClick={() => {
+                console.log('Clicked:', cat.id)
+                setSelectedCategory(cat.id)
+              }}
             >
               <span>{cat.icon}</span>
               {cat.label}

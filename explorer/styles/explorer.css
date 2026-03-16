@@ -187,6 +187,9 @@ html, body, #root {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 }
 .category-tab:hover {
   border-color: #10a37f;
@@ -208,6 +211,9 @@ html, body, #root {
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 }
 .widget-showcase-card:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -254,6 +260,7 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  pointer-events: auto;
 }
 .widget-modal {
   background: white;
@@ -262,6 +269,9 @@ html, body, #root {
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+  position: relative;
+  z-index: 1001;
+  pointer-events: auto;
 }
 .modal-header {
   display: flex;
