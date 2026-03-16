@@ -26,6 +26,7 @@ export function StudioPage() {
   const [previewWidget, setPreviewWidget] = useState<any>(null)
   const [editingName, setEditingName] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
+  const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | ''>('')
   
   // Check if we got a widget from Gallery
   useEffect(() => {
@@ -80,6 +81,30 @@ export function StudioPage() {
     
     return () => clearTimeout(timer)
   }, [code])
+  
+  // Auto-save code changes
+  useEffect(() => {
+    if (!selectedWidgetId || !code.trim()) return
+    
+    const timer = setTimeout(() => {
+      setSaveStatus('saving')
+      
+      const updated = savedWidgets.map(w =>
+        w.id === selectedWidgetId
+          ? { ...w, code, updatedAt: Date.now() }
+          : w
+      )
+      setSavedWidgets(updated)
+      saveToStorage(updated)
+      
+      setTimeout(() => {
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus(''), 1500)
+      }, 200)
+    }, 500) // Debounce 500ms
+    
+    return () => clearTimeout(timer)
+  }, [code, selectedWidgetId])
   
   const parseCode = () => {
     setError(null)
@@ -277,7 +302,8 @@ export function StudioPage() {
             <h3>JSON Editor</h3>
             <div className="studio-panel-actions">
               {error && <span className="studio-error-badge">⚠️ Invalid JSON</span>}
-              <button className="btn-primary btn-sm" onClick={saveWidget}>💾 Save</button>
+              {saveStatus === 'saving' && <span className="studio-saving-badge">💾 Saving...</span>}
+              {saveStatus === 'saved' && <span className="studio-success-badge">✓ Saved</span>}
             </div>
           </div>
           

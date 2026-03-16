@@ -911,6 +911,22 @@ html, body, #root {
   font-weight: 600;
   border-radius: 4px;
 }
+.studio-saving-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
 .studio-success-badge {
   display: inline-flex;
   align-items: center;
