@@ -193,7 +193,7 @@ export function StudioPage() {
         {/* Left Panel - Widget List */}
         <div className="studio-sidebar">
           <div className="studio-sidebar-header">
-            <h3>Widgets ({savedWidgets.length})</h3>
+            <h3>Studio</h3>
             <div className="studio-sidebar-actions">
               <button onClick={createNew} className="btn-icon" title="New Widget">+</button>
               <label className="btn-icon" title="Upload Widget">
