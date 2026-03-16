@@ -5,8 +5,10 @@
  */
 
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export function GalleryPage() {
+  const navigate = useNavigate()
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedWidget, setSelectedWidget] = useState<any>(null)
@@ -96,13 +98,43 @@ export function GalleryPage() {
         <WidgetModal 
           widget={selectedWidget}
           onClose={() => setSelectedWidget(null)}
+          navigate={navigate}
         />
       )}
     </div>
   )
 }
 
-function WidgetModal({ widget, onClose }: { widget: any; onClose: () => void }) {
+function WidgetModal({ widget, onClose, navigate }: { widget: any; onClose: () => void; navigate: any }) {
+  const [copied, setCopied] = useState(false)
+  
+  const copyJSON = () => {
+    const json = JSON.stringify(widget.schema, null, 2)
+    navigator.clipboard.writeText(json)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  
+  const openInStudio = () => {
+    // Save widget to localStorage for studio to pick up
+    const studioWidget = {
+      id: Date.now().toString(),
+      name: widget.name,
+      code: JSON.stringify(widget.schema, null, 2),
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    }
+    
+    // Get existing widgets
+    const existing = JSON.parse(localStorage.getItem('flowkit-studio-widgets') || '[]')
+    existing.push(studioWidget)
+    localStorage.setItem('flowkit-studio-widgets', JSON.stringify(existing))
+    
+    // Navigate to studio
+    onClose()
+    navigate('/studio')
+  }
+  
   return (
     <div className="widget-modal-overlay" onClick={onClose}>
       <div className="widget-modal" onClick={(e) => e.stopPropagation()}>
@@ -123,10 +155,10 @@ function WidgetModal({ widget, onClose }: { widget: any; onClose: () => void }) 
         </div>
         
         <div className="modal-actions">
-          <button className="btn btn-primary">
-            Copy JSON
+          <button className="btn btn-primary" onClick={copyJSON}>
+            {copied ? '✓ Copied!' : 'Copy JSON'}
           </button>
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary" onClick={openInStudio}>
             Open in Studio
           </button>
         </div>
