@@ -608,11 +608,198 @@ function WidgetPreview({ widget }: { widget: any }) {
     )
   }
   
-  // Default: show formatted JSON
+  // Default: Smart render for ANY custom widget
+  // This handles RestaurantCard, HotelCard, ServiceCard, etc.
   return (
-    <div style={{ background: '#1e1e1e', color: '#d4d4d4', padding: 16, borderRadius: 8, fontFamily: 'Monaco, Menlo, monospace', fontSize: 12, maxHeight: 400, overflow: 'auto', maxWidth: '100%' }}>
-      <div style={{ marginBottom: 8, color: '#9ca3af', fontSize: 11 }}>No preview for type: {type}</div>
-      <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{JSON.stringify(widget, null, 2)}</pre>
+    <div style={{ maxWidth: 320, background: 'white', borderRadius: 12, overflow: 'hidden', border: '1px solid #e5e5e5', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+      {/* Image */}
+      {(widget.image || widget.imageUrl || widget.img || widget.photo) && (
+        <img 
+          src={widget.image || widget.imageUrl || widget.img || widget.photo} 
+          alt={widget.title || widget.heading || widget.name || 'Image'}
+          style={{ width: '100%', height: 160, objectFit: 'cover' }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+        />
+      )}
+      
+      <div style={{ padding: 16 }}>
+        {/* Badge */}
+        {(widget.badge || widget.tag || widget.label) && (
+          <span style={{ 
+            display: 'inline-block', 
+            padding: '4px 8px', 
+            background: widget.badgeColor || widget.tagColor || '#ef4444', 
+            color: 'white', 
+            fontSize: 11, 
+            fontWeight: 600, 
+            borderRadius: 4, 
+            marginBottom: 8 
+          }}>
+            {widget.badge || widget.tag || widget.label}
+          </span>
+        )}
+        
+        {/* Title/Heading/Name */}
+        {(widget.title || widget.heading || widget.name) && (
+          <h3 style={{ margin: '0 0 4px 0', fontSize: 16, fontWeight: 600 }}>
+            {widget.title || widget.heading || widget.name}
+          </h3>
+        )}
+        
+        {/* Subtitle/Description/Text */}
+        {(widget.subtitle || widget.description || widget.text) && (
+          <p style={{ margin: '0 0 8px 0', fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>
+            {widget.subtitle || widget.description || widget.text}
+          </p>
+        )}
+        
+        {/* Location/Address */}
+        {(widget.location || widget.address) && (
+          <p style={{ margin: '0 0 8px 0', fontSize: 12, color: '#6b7280' }}>
+            📍 {widget.location || widget.address}
+          </p>
+        )}
+        
+        {/* Price/Cost */}
+        {(widget.price || widget.cost || widget.amount) && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            {widget.originalPrice && (
+              <span style={{ textDecoration: 'line-through', color: '#9ca3af', fontSize: 14 }}>
+                ${widget.originalPrice}
+              </span>
+            )}
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#10a37f' }}>
+              ${(widget.price || widget.cost || widget.amount)}
+            </span>
+            {widget.currency && (
+              <span style={{ fontSize: 12, color: '#6b7280' }}>{widget.currency}</span>
+            )}
+          </div>
+        )}
+        
+        {/* Rating */}
+        {(widget.rating || widget.stars || widget.score) && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 12 }}>
+            <span style={{ color: '#fbbf24', fontSize: 16 }}>★</span>
+            <span style={{ fontWeight: 600, fontSize: 14 }}>
+              {widget.rating || widget.stars || widget.score}
+            </span>
+            {(widget.reviews || widget.reviewCount) && (
+              <span style={{ color: '#9ca3af', fontSize: 12 }}>
+                ({widget.reviews || widget.reviewCount} reviews)
+              </span>
+            )}
+          </div>
+        )}
+        
+        {/* Progress/Percentage */}
+        {(widget.progress || widget.percentage || widget.value !== undefined) && (
+          <div style={{ marginBottom: 12 }}>
+            {(widget.label || widget.progressLabel) && (
+              <div style={{ marginBottom: 4, fontSize: 12, fontWeight: 600 }}>
+                {widget.label || widget.progressLabel}
+              </div>
+            )}
+            <div style={{ height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
+              <div style={{ 
+                width: `${widget.progress || widget.percentage || widget.value}%`, 
+                height: '100%', 
+                background: widget.color || '#10a37f' 
+              }}></div>
+            </div>
+            <div style={{ textAlign: 'right', fontSize: 11, color: '#6b7280', marginTop: 4 }}>
+              {widget.progress || widget.percentage || widget.value}%
+            </div>
+          </div>
+        )}
+        
+        {/* Avatar/Author/User */}
+        {(widget.avatar || widget.author || widget.user) && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+            <div style={{ 
+              width: 40, 
+              height: 40, 
+              borderRadius: '50%', 
+              background: widget.avatarColor || '#6366f1', 
+              color: 'white', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontWeight: 600,
+              overflow: 'hidden'
+            }}>
+              {widget.avatarImage ? (
+                <img src={widget.avatarImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                (widget.avatar || widget.author || widget.user)?.[0]?.toUpperCase() || '?'
+              )}
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{widget.avatar || widget.author || widget.user}</div>
+              {(widget.role || widget.title) && (
+                <div style={{ fontSize: 12, color: '#6b7280' }}>{widget.role}</div>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Items List */}
+        {(widget.items || widget.features || widget.list) && (
+          <div style={{ marginBottom: 12 }}>
+            {(widget.items || widget.features || widget.list).slice(0, 5).map((item: any, i: number) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #f3f4f6' }}>
+                {typeof item === 'string' ? (
+                  <span style={{ fontSize: 13 }}>• {item}</span>
+                ) : (
+                  <>
+                    {item.icon && <span>{item.icon}</span>}
+                    <span style={{ fontSize: 13 }}>{item.text || item.label || item.name}</span>
+                    {item.value && <span style={{ fontSize: 12, color: '#6b7280' }}>{item.value}</span>}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* Button/Action */}
+        {(widget.button || widget.buttonText || widget.action || widget.cta) && (
+          <button style={{ 
+            width: '100%', 
+            padding: 10, 
+            background: widget.buttonColor || '#10a37f', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: 8, 
+            fontWeight: 600, 
+            fontSize: 14, 
+            cursor: 'pointer' 
+          }}>
+            {widget.button || widget.buttonText || widget.action || widget.cta}
+          </button>
+        )}
+        
+        {/* Stats/Numbers */}
+        {widget.stats && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+            {widget.stats.map((stat: any, i: number) => (
+              <div key={i} style={{ textAlign: 'center', padding: 8, background: '#f7f7f8', borderRadius: 6 }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#10a37f' }}>{stat.value}</div>
+                <div style={{ fontSize: 11, color: '#6b7280' }}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* Contact Info */}
+        {(widget.phone || widget.email || widget.website) && (
+          <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
+            {widget.phone && <div>📞 {widget.phone}</div>}
+            {widget.email && <div>✉️ {widget.email}</div>}
+            {widget.website && <div>🌐 {widget.website}</div>}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
