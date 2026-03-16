@@ -17,7 +17,7 @@ export function IconsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const iconsPerPage = 100
+  const iconsPerPage = 96
   
   // Known non-icon exports to exclude
   const excludeList = [
