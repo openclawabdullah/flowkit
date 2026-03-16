@@ -18,7 +18,7 @@ import {
   Puzzle, 
   Wrench, 
   BookOpen, 
-  GitHub 
+  Github 
 } from 'lucide-react'
 
 // Pages
@@ -109,7 +109,7 @@ function Sidebar() {
           rel="noopener noreferrer"
           className="github-link"
         >
-          <GitHub size={16} />
+          <Github size={16} />
           <span>GitHub</span>
         </a>
       </div>
