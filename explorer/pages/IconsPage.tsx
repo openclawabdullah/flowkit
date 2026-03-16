@@ -5,24 +5,23 @@
  */
 
 import React, { useState } from 'react'
-import * as LucideIcons from 'lucide-react'
+import * as Icons from 'lucide-react'
 
 export function IconsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
   
-  const allIcons = Object.keys(LucideIcons).filter(
-    key => key !== 'default' && typeof (LucideIcons as any)[key] === 'function'
-  )
+  // Filter only actual icon components (they start with uppercase and are functions)
+  const iconNames = Object.keys(Icons).filter(key => {
+    // Skip non-icon exports
+    if (['default', 'icons', 'createLucideIcon', 'LucideIcon', 'LucideProps'].includes(key)) return false
+    // Icons start with uppercase letter
+    if (!/^[A-Z]/.test(key)) return false
+    // Must be a function (component)
+    return typeof (Icons as any)[key] === 'function'
+  })
   
-  const categories = [
-    { id: 'all', label: 'All Icons', count: allIcons.length },
-    { id: 'popular', label: 'Popular', icons: ['Home', 'Star', 'Heart', 'Settings', 'User', 'Mail', 'Search', 'Plus', 'Check', 'X'] },
-  { id: 'arrows', label: 'Arrows', icons: allIcons.filter(i => i.toLowerCase().includes('arrow')) },
-    { id: 'media', label: 'Media', icons: allIcons.filter(i => /(play|pause|music|video|image|camera|mic)/i.test(i.toLowerCase())) },
-  ]
-  
-  const filteredIcons = allIcons.filter(name => {
+  const filteredIcons = iconNames.filter(name => {
     return name.toLowerCase().includes(searchQuery.toLowerCase())
   })
   
@@ -36,9 +35,9 @@ export function IconsPage() {
   return (
     <div className="page icons-page">
       <div className="page-header">
-        <h1 className="page-title">🎨 Icons</h1>
+        <h1 className="page-title">Icons</h1>
         <p className="page-subtitle">
-          {allIcons.length} Lucide icons available
+          {iconNames.length} Lucide icons available
         </p>
       </div>
       
@@ -49,12 +48,13 @@ export function IconsPage() {
           placeholder="Search icons..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ maxWidth: 400 }}
         />
       </div>
       
       <div className="icons-grid">
         {filteredIcons.map(iconName => {
-          const IconComponent = (LucideIcons as any)[iconName]
+          const IconComponent = (Icons as any)[iconName]
           
           return (
             <div 
@@ -63,36 +63,35 @@ export function IconsPage() {
               onClick={() => copyToClipboard(iconName)}
             >
               <div className="icon-preview">
-                {IconComponent && <IconComponent size={24} />}
+                <IconComponent size={24} />
               </div>
               <div className="icon-name">{iconName}</div>
               {copiedIcon === iconName && (
-                <div className="icon-copied">✓ Copied!</div>
+                <div className="icon-copied">✓</div>
               )}
             </div>
           )
         })}
       </div>
       
-      <div className="usage-example">
-        <h3>How to use icons in FlowKit</h3>
+      <div className="usage-example" style={{ marginTop: 32 }}>
+        <h3>How to use icons</h3>
         <div className="code-block">
           <pre>{`// Import icon
 import { Home, Star, Heart } from 'lucide-react'
 
-// Use in widget
-const widget = {
-  type: 'Button',
-  label: 'Home',
-  icon: 'Home',
-  iconPosition: 'left'
-}
+// Use in React
+<Home size={24} />
+<Star size={20} color="#fbbf24" />
+<Heart size={16} className="text-red-500" />
 
-// WidgetRenderer will render:
-<Button>
-  <Home size={18} />
-  Home
-</Button>`}</pre>
+// In FlowKit widget JSON
+{
+  "type": "Button",
+  "label": "Home",
+  "iconStart": "Home",
+  "iconPosition": "left"
+}`}</pre>
         </div>
       </div>
     </div>
