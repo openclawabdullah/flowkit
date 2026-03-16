@@ -61,7 +61,7 @@ function Sidebar() {
     { path: '/gallery', icon: 'Grid3x3', label: 'Gallery' },
     { path: '/icons', icon: 'Smile', label: 'Icons' },
     { path: '/components', icon: 'Puzzle', label: 'Components' },
-    { path: '/studio', icon: 'Wrench', label: 'Widget Studio' },
+    { path: '/studio', icon: 'Wrench', label: 'Studio' },
     { path: '/docs', icon: 'BookOpen', label: 'Documentation' },
   ]
   
