@@ -4,49 +4,46 @@
  * Browse all available Lucide icons
  */
 
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import * as AllIcons from 'lucide-react'
 
 export function IconsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
   
-  // Get only actual icon components - filter out utilities and types
-  const iconNames = useMemo(() => {
-    const excludeList = new Set([
-      'default',
-      'createLucideIcon', 
-      'LucideIcon',
-      'LucideProps',
-      'Icon',
-      'icons'
-    ])
-    
-    return Object.keys(AllIcons)
-      .filter(key => {
-        // Skip excluded names
-        if (excludeList.has(key)) return false
-        
-        // Icons start with uppercase letter
-        if (!/^[A-Z]/.test(key)) return false
-        
-        // Must be a function
-        const val = (AllIcons as any)[key]
-        if (typeof val !== 'function') return false
-        
-        // Skip if it has $$typeof (React element, not component)
-        if (val.$$typeof) return false
-        
-        return true
-      })
-      .sort()
-  }, [])
+  // Known non-icon exports to exclude
+  const excludeList = [
+    'createLucideIcon',
+    'LucideIcon', 
+    'LucideProps',
+    'Icon',
+    'icons',
+    'default'
+  ]
   
-  const filteredIcons = useMemo(() => {
-    if (!searchQuery) return iconNames
-    const query = searchQuery.toLowerCase()
-    return iconNames.filter(name => name.toLowerCase().includes(query))
-  }, [iconNames, searchQuery])
+  // Get all icon names - simple approach
+  const iconNames: string[] = []
+  
+  for (const key of Object.keys(AllIcons)) {
+    // Skip excluded names
+    if (excludeList.includes(key)) continue
+    
+    // Icons start with uppercase letter
+    if (!/^[A-Z]/.test(key)) continue
+    
+    // Must be a function (component)
+    const val = (AllIcons as any)[key]
+    if (typeof val !== 'function') continue
+    
+    iconNames.push(key)
+  }
+  
+  // Sort alphabetically
+  iconNames.sort()
+  
+  const filteredIcons = searchQuery 
+    ? iconNames.filter(name => name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : iconNames
   
   const copyToClipboard = (iconName: string) => {
     const usageCode = `import { ${iconName} } from 'lucide-react'\n\n<${iconName} size={24} />`
@@ -76,7 +73,7 @@ export function IconsPage() {
       </div>
       
       <div className="icons-grid">
-        {filteredIcons.map(iconName => {
+        {filteredIcons.slice(0, 200).map(iconName => {
           const IconComponent = (AllIcons as any)[iconName]
           if (!IconComponent) return null
           
@@ -85,7 +82,7 @@ export function IconsPage() {
               key={iconName}
               className="icon-card"
               onClick={() => copyToClipboard(iconName)}
-              title={`${iconName} - Click to copy`}
+              title={iconName}
             >
               <div className="icon-preview">
                 <IconComponent size={20} />
@@ -98,6 +95,12 @@ export function IconsPage() {
           )
         })}
       </div>
+      
+      {filteredIcons.length > 200 && (
+        <div style={{ textAlign: 'center', padding: 20, color: '#6b7280', fontSize: 14 }}>
+          Showing first 200 of {filteredIcons.length} icons. Use search to find specific icons.
+        </div>
+      )}
       
       {filteredIcons.length === 0 && (
         <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>
