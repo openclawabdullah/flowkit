@@ -7,6 +7,12 @@
 import React, { useState } from 'react'
 import * as AllIcons from 'lucide-react'
 
+// Type for forwardRef component
+type ForwardRefComponent = {
+  $$typeof: symbol | number
+  render: (...args: any[]) => any
+}
+
 export function IconsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
@@ -21,12 +27,8 @@ export function IconsPage() {
     'default'
   ]
   
-  // Get all icon names - simple approach
+  // Get all icon names
   const iconNames: string[] = []
-  
-  // Debug: log all keys
-  console.log('Total keys from lucide-react:', Object.keys(AllIcons).length)
-  console.log('First 10 keys:', Object.keys(AllIcons).slice(0, 10))
   
   for (const key of Object.keys(AllIcons)) {
     // Skip excluded names
@@ -35,25 +37,15 @@ export function IconsPage() {
     // Icons start with uppercase letter
     if (!/^[A-Z]/.test(key)) continue
     
-    // Must be a function (component)
     const val = (AllIcons as any)[key]
     
-    // Debug first few
-    if (iconNames.length < 3) {
-      console.log(`Checking ${key}:`, {
-        type: typeof val,
-        isFunction: typeof val === 'function',
-        val: val
-      })
+    // Icons are React.forwardRef objects with $$typeof and render
+    if (val && typeof val === 'object' && val.$$typeof && typeof val.render === 'function') {
+      iconNames.push(key)
     }
-    
-    if (typeof val !== 'function') continue
-    
-    iconNames.push(key)
   }
   
-  console.log('Filtered icon names:', iconNames.length)
-  console.log('First 10 icons:', iconNames.slice(0, 10))
+  console.log('Total icons found:', iconNames.length)
   
   // Sort alphabetically
   iconNames.sort()
