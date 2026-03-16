@@ -1,23 +1,17 @@
 /**
  * FlowKit Explorer - Icons Page
  * 
- * Browse all available Lucide icons
+ * Browse all available Lucide icons with pagination
  */
 
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import * as AllIcons from 'lucide-react'
-
-// Type for forwardRef component
-type ForwardRefComponent = {
-  $$typeof: symbol | number
-  render: (...args: any[]) => any
-}
 
 export function IconsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const iconsPerPage = 96
+  const iconsPerPage = 200
   
   // Known non-icon exports to exclude
   const excludeList = [
@@ -29,41 +23,46 @@ export function IconsPage() {
     'default'
   ]
   
-  // Get all icon names
-  const iconNames: string[] = []
-  
-  for (const key of Object.keys(AllIcons)) {
-    // Skip excluded names
-    if (excludeList.includes(key)) continue
+  // Get all icon names - memoized to compute only once
+  const iconNames = useMemo(() => {
+    const names: string[] = []
     
-    // Icons start with uppercase letter
-    if (!/^[A-Z]/.test(key)) continue
-    
-    const val = (AllIcons as any)[key]
-    
-    // Icons are React.forwardRef objects with $$typeof and render
-    if (val && typeof val === 'object' && val.$$typeof && typeof val.render === 'function') {
-      iconNames.push(key)
+    for (const key of Object.keys(AllIcons)) {
+      // Skip excluded names
+      if (excludeList.includes(key)) continue
+      
+      // Icons start with uppercase letter
+      if (!/^[A-Z]/.test(key)) continue
+      
+      const val = (AllIcons as any)[key]
+      
+      // Icons are React.forwardRef objects with $$typeof and render
+      if (val && typeof val === 'object' && val.$$typeof && typeof val.render === 'function') {
+        names.push(key)
+      }
     }
-  }
+    
+    // Sort alphabetically
+    return names.sort()
+  }, [])
   
-  console.log('Total icons found:', iconNames.length)
-  
-  // Sort alphabetically
-  iconNames.sort()
-  
-  const filteredIcons = searchQuery 
-    ? iconNames.filter(name => name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : iconNames
+  // Filter icons based on search
+  const filteredIcons = useMemo(() => {
+    if (!searchQuery) return iconNames
+    return iconNames.filter(name => 
+      name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [iconNames, searchQuery])
   
   // Pagination
-  const totalPages = Math.ceil(filteredIcons.length / iconsPerPage)
-  const startIndex = (currentPage - 1) * iconsPerPage
+  const totalPages = Math.max(1, Math.ceil(filteredIcons.length / iconsPerPage))
+  const currentPageSafe = Math.min(currentPage, totalPages)
+  const startIndex = (currentPageSafe - 1) * iconsPerPage
   const endIndex = startIndex + iconsPerPage
   const paginatedIcons = filteredIcons.slice(startIndex, endIndex)
   
   // Reset to page 1 when search changes
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentPage(1)
   }, [searchQuery])
   
@@ -72,6 +71,26 @@ export function IconsPage() {
     navigator.clipboard.writeText(usageCode)
     setCopiedIcon(iconName)
     setTimeout(() => setCopiedIcon(null), 2000)
+  }
+  
+  // Get visible page numbers
+  const getVisiblePages = () => {
+    const pages: number[] = []
+    const maxVisible = 5
+    
+    let start = Math.max(1, currentPageSafe - 2)
+    let end = Math.min(totalPages, start + maxVisible - 1)
+    
+    // Adjust if we're near the end
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1)
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i)
+    }
+    
+    return pages
   }
   
   return (
@@ -118,62 +137,49 @@ export function IconsPage() {
         })}
       </div>
       
+      {filteredIcons.length === 0 && (
+        <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>
+          No icons found matching "{searchQuery}"
+        </div>
+      )}
+      
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="pagination">
           <button 
             className="pagination-btn"
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
+            disabled={currentPageSafe === 1}
           >
-            ← Previous
+            ← Prev
           </button>
           
+          <div className="pagination-pages">
+            {getVisiblePages().map(page => (
+              <button
+                key={page}
+                className={`pagination-page ${currentPageSafe === page ? 'active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+          
           <div className="pagination-info">
-            Page {currentPage} of {totalPages}
+            {currentPageSafe} / {totalPages}
             <span className="pagination-total">
               ({filteredIcons.length} icons)
             </span>
           </div>
           
-          <div className="pagination-pages">
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              let pageNum
-              if (totalPages <= 5) {
-                pageNum = i + 1
-              } else if (currentPage <= 3) {
-                pageNum = i + 1
-              } else if (currentPage >= totalPages - 2) {
-                pageNum = totalPages - 4 + i
-              } else {
-                pageNum = currentPage - 2 + i
-              }
-              
-              return (
-                <button
-                  key={pageNum}
-                  className={`pagination-page ${currentPage === pageNum ? 'active' : ''}`}
-                  onClick={() => setCurrentPage(pageNum)}
-                >
-                  {pageNum}
-                </button>
-              )
-            })}
-          </div>
-          
           <button 
             className="pagination-btn"
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
+            disabled={currentPageSafe === totalPages}
           >
             Next →
           </button>
-        </div>
-      )}
-      
-      {filteredIcons.length === 0 && (
-        <div style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>
-          No icons found matching "{searchQuery}"
         </div>
       )}
       
